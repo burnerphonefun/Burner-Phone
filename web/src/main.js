@@ -335,7 +335,7 @@ wst.addEventListener('click', () => {
   hideWasted();
   if (mobile) phoneHost.scrollIntoView({ behavior: 'smooth', block: 'center' }); else phone.raise();
   if (phone.view() === 'lock') phone.unlock();
-  phone.open('chart', wstMint);
+  phone.open('chart', { mint: wstMint, tf: '5m', fit: true, rugged: true });
 });
 setTimeout(() => { if (!params.has('still')) showWasted(); }, mobile ? 12000 : 9000);
 net.on('grad', (m) => pushEvent('grad', m.mint));

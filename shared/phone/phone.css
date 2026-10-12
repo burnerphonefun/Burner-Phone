@@ -167,7 +167,7 @@
 .bp-note-ic svg { width: 17px; height: 17px; }
 .bp-note-tx { flex: 1; min-width: 0; }
 .bp-note-tx b { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bp-note-tx small { display: block; font-size: 12px; color: #b9b2bf; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bp-note-tx small { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font-size: 12px; line-height: 1.3; color: #b9b2bf; overflow: hidden; }
 .bp-note time { font-size: 11px; color: #9a93a0; }
 .bp-lk-bottom { margin-top: auto; display: flex; align-items: center; justify-content: space-between; padding: 0 22px 8px; }
 .bp-lk-btn { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: rgba(16,10,22,.6); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); }
@@ -279,6 +279,10 @@
 .bp-ch-sells button { background: rgba(255,90,31,.16); color: #ff8a5c; }
 .bp-ch-sells button:last-child { background: var(--bp-accent); color: #170700; }
 .bp-chart.bp-rugged .bp-ch-mc { color: var(--bp-dn); }
+/* a rugged coin's chart carries the stamp too, top-right where a dead chart is empty */
+.bp-chart.bp-rugged .bp-ch-box { position: relative; }
+.bp-chart.bp-rugged .bp-ch-box::after { content: 'RUGGED'; position: absolute; right: 64px; top: 34px; height: 26px; padding: 0 8px; display: grid; place-items: center; font: 900 17px/1 var(--bp-display); letter-spacing: 1.5px;
+  color: var(--bp-dn); background: rgba(40,4,8,.82); border: 2.5px solid currentColor; border-radius: 5px; transform: rotate(-9deg); pointer-events: none; animation: bp-stamp 220ms cubic-bezier(.2,.9,.3,1.2) 1 both; }
 
 /* ---------- bags ---------- */
 .bp-bags { display: flex; flex-direction: column; gap: 8px; }

@@ -12,6 +12,7 @@ const ms = (t) => (t < 1e12 ? t * 1000 : t);
 export function chartApp(ctx) {
   const { net, wallet } = ctx;
   let mint = null, tf = '1m', trades = [], zoom = 48, loading = false, dirty = true;
+  const rugs = new Set(); // coins the server saw rug while we weren't watching (opened from the day's biggest WASTED)
   let srv = { '5s': [], '1m': [], '5m': [] };
   let hover = null; // { x, y } in canvas css px while the pointer is over the chart
   let anim = null;  // the last close easing toward its new value
@@ -66,11 +67,12 @@ export function chartApp(ctx) {
   function paintTf() { for (const b of tfs.children) b.classList.toggle('bp-sel', b.dataset.tf === tf); }
   paintTf();
 
-  async function load(m) {
+  async function load(m, o = {}) {
     mint = m; trades = []; srv = { '5s': [], '1m': [], '5m': [] }; dirty = true; hover = null;
     const c = net.coin(m);
-    // fresh coins read best on 5s candles, older ones on 1m
-    tf = c?.created && Date.now() - c.created < 10 * 60e3 ? '5s' : '1m'; paintTf();
+    // fresh coins read best on 5s candles, older ones on 1m; a replay asks for its own (5m, whole life in view)
+    tf = o.tf || (c?.created && Date.now() - c.created < 10 * 60e3 ? '5s' : '1m'); paintTf();
+    zoom = 48;
     pf.replaceChildren(ctx.pfp(c || { mint: m }, 40));
     mcT.ready = false;
     paintHead(); paintStats(); paintPos(); paintTape(); draw();
@@ -78,6 +80,7 @@ export function chartApp(ctx) {
     const [j] = await Promise.all([net.fetchCoin(m), loadCandles(m, tf)]);
     if (mint !== m) return;
     loading = false;
+    if (o.fit && srv[tf].length) zoom = Math.max(16, Math.min(160, srv[tf].length + 1));
     if (j) {
       trades = (j.trades || []).map((t) => [ms(t[0]), t[1], t[2], t[3], t[4]]);
       if (!c && j.coin) pf.replaceChildren(ctx.pfp(j.coin, 40));
@@ -104,8 +107,14 @@ export function chartApp(ctx) {
     setText(sub, tick(c.symbol) + ' · ' + (c.created ? age(Date.now() - c.created) + ' old' : '') + (c.complete ? ' · bonded' : ''));
     mcT.set(net.mcOf(c));
     const ks = series();
-    if (ks.length > 1) { const x = ks[ks.length - 1][4] / ks[Math.max(0, ks.length - zoom)][1] - 1; setText(chg, pct(x) + ' in view'); chg.dataset.dir = x >= 0 ? 'up' : 'dn'; } else setText(chg, '');
-    v.classList.toggle('bp-rugged', !!c.rugged);
+    const dead = !!c.rugged || rugs.has(mint);
+    if (ks.length > 1 && dead) {
+      // a rugged coin: how far it fell from the top in view, not from where the view starts
+      const hi = Math.max(...ks.slice(-zoom).map((k) => k[2]));
+      const f = ks[ks.length - 1][4] / hi - 1; // -99.8% stays -99.8%, never rounds to -100%
+      setText(chg, (f <= -0.99 ? (Math.ceil(f * 1000) / 10).toFixed(1) + '%' : pct(f)) + ' from top'); chg.dataset.dir = 'dn';
+    } else if (ks.length > 1) { const x = ks[ks.length - 1][4] / ks[Math.max(0, ks.length - zoom)][1] - 1; setText(chg, pct(x) + ' in view'); chg.dataset.dir = x >= 0 ? 'up' : 'dn'; } else setText(chg, '');
+    v.classList.toggle('bp-rugged', !!c.rugged || rugs.has(mint));
   }
   function paintStats() {
     const c = net.coin(mint) || {};
@@ -314,9 +323,12 @@ export function chartApp(ctx) {
   return {
     el: v,
     mint: () => mint,
-    enter(m) {
-      const target = m || mint || pickDefault();
-      if (target && target !== mint) load(target);
+    enter(arg) {
+      // a mint, or { mint, tf, fit, rugged } for a replay
+      const o = arg && typeof arg === 'object' ? arg : { mint: arg };
+      if (o.rugged && o.mint) rugs.add(o.mint);
+      const target = o.mint || mint || pickDefault();
+      if (target && (target !== mint || o.tf)) load(target, o);
       else { dirty = true; paintHead(); paintStats(); paintPos(); paintTape(); draw(); }
     },
     leave() { hover = null; },

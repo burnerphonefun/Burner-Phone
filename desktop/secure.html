@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
+<title>BurnerPhone wallet</title>
+<style>
+  :root { color-scheme: dark; --ink: #0b0a09; --paper: #fff4e6; --burn: #ff5a1f; --dim: rgba(255,244,230,.62); --blood: #e8233a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--ink); color: var(--paper); font: 14px/1.45 'Segoe UI', system-ui, sans-serif; -webkit-user-select: none; user-select: none; }
+  main { padding: 20px 24px; display: flex; flex-direction: column; gap: 11px; height: 100%; }
+  h1 { margin: 0; font: 800 21px/1.15 'Segoe UI', system-ui, sans-serif; letter-spacing: .2px; }
+  h1 b { color: var(--burn); }
+  p { margin: 0; color: var(--dim); font-size: 13px; }
+  .warn { color: #ffb27a; }
+  .row { display: flex; gap: 8px; }
+  input { flex: 1; height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid rgba(255,244,230,.2); background: #16120f; color: var(--paper); font: 13px Consolas, monospace; -webkit-user-select: text; user-select: text; }
+  input:focus { outline: 2px solid var(--burn); border-color: transparent; }
+  button { height: 42px; padding: 0 16px; border-radius: 10px; border: 0; font: 650 14px 'Segoe UI', system-ui, sans-serif; cursor: pointer; }
+  button:disabled { opacity: .45; cursor: default; }
+  .main { background: var(--burn); color: #170700; }
+  .main.danger { background: var(--blood); color: #fff; }
+  .ghost { background: #221d19; color: var(--paper); }
+  .err { min-height: 18px; color: var(--blood); font-size: 13px; }
+  .box { padding: 10px 12px; border-radius: 10px; background: #16120f; border: 1px solid rgba(255,244,230,.14); }
+  .amt { font: 800 20px 'Segoe UI', system-ui, sans-serif; }
+  .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--dim); }
+  .addr { font: 13px/1.6 Consolas, monospace; word-break: break-all; letter-spacing: .5px; }
+  .key { padding: 12px; border-radius: 10px; background: #16120f; border: 1px solid rgba(255,244,230,.14); font: 12.5px/1.5 Consolas, monospace; word-break: break-all; min-height: 64px; filter: blur(6px); transition: filter .2s; }
+  .key.shown { filter: none; -webkit-user-select: text; user-select: text; }
+  .hold { position: relative; overflow: hidden; }
+  .hold i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: rgba(255,255,255,.18); }
+  .foot { margin-top: auto; display: flex; gap: 8px; justify-content: flex-end; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main id="import" hidden>
+  <h1><b>B</b>urner · import a wallet</h1>
+  <p>paste the private key (base58, or a [..] byte array). it's encrypted with your Windows account and never leaves this PC.</p>
+  <p class="warn">use a burner: a wallet with only what you'd trade from inside a game, not your main one.</p>
+  <div class="row"><input id="secret" type="password" autocomplete="off" spellcheck="false" placeholder="private key"><button class="ghost" id="peek" type="button">show</button></div>
+  <div class="err" id="err"></div>
+  <div class="foot"><button class="ghost" id="cancel" type="button">cancel</button><button class="main" id="go" type="button">import</button></div>
+</main>
+<main id="export" hidden>
+  <h1><b>B</b>urner · your private key</h1>
+  <p class="warn">anyone with this key owns the wallet. never paste it into a website or send it to anyone, burner included.</p>
+  <p>write it down somewhere safe. if you copy it, Windows may keep it in clipboard history.</p>
+  <div class="key" id="key">hold the button to reveal</div>
+  <div class="row"><button class="ghost hold" id="reveal" type="button"><i></i>hold to reveal</button></div>
+  <div class="err" id="err2"></div>
+  <div class="foot"><button class="main" id="done" type="button">done</button></div>
+</main>
+<main id="confirm" hidden>
+  <h1 id="ctitle"></h1>
+  <div id="clines"></div>
+  <div class="box" id="camtbox" hidden><div class="lbl">amount</div><div class="amt" id="camt"></div></div>
+  <div class="box" id="caddrbox" hidden><div class="lbl" id="caddrlbl">address</div><div class="addr" id="caddr"></div></div>
+  <div class="foot"><button class="ghost" id="cno" type="button">cancel</button><button class="main" id="cyes" type="button" disabled>confirm</button></div>
+</main>
+<script>
+(async () => {
+  const B = window.burnerSecure;
+  const $ = (id) => document.getElementById(id);
+  const ctx = await B.context();
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') B.close(); });
+  if (ctx.mode === 'import') {
+    $('import').hidden = false;
+    const input = $('secret');
+    input.focus();
+    $('peek').onclick = () => { input.type = input.type === 'password' ? 'text' : 'password'; $('peek').textContent = input.type === 'password' ? 'show' : 'hide'; input.focus(); };
+    const go = async () => {
+      const v = input.value.trim();
+      if (!v) { $('err').textContent = 'paste a key first'; return; }
+      $('go').disabled = true; $('err').textContent = '';
+      const r = await B.importKey(v);
+      input.value = '';
+      $('go').disabled = false;
+      if (r && r.err) { $('err').textContent = r.err; input.focus(); }
+    };
+    $('go').onclick = go;
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+    $('cancel').onclick = () => B.close();
+  } else if (ctx.mode === 'export') {
+    $('export').hidden = false;
+    const btn = $('reveal'), bar = btn.querySelector('i'), key = $('key');
+    let t0 = 0, raf = 0, timer = 0;
+    const stop = () => { cancelAnimationFrame(raf); bar.style.width = '0'; t0 = 0; };
+    const step = async () => {
+      const k = Math.min(1, (performance.now() - t0) / 1000);
+      bar.style.width = k * 100 + '%';
+      if (k < 1) { raf = requestAnimationFrame(step); return; }
+      stop();
+      const r = await B.reveal();
+      if (r && r.ok) { key.textContent = r.secret; key.classList.add('shown'); clearTimeout(timer); timer = setTimeout(() => { key.textContent = 'hold the button to reveal'; key.classList.remove('shown'); }, 30000); }
+      else $('err2').textContent = (r && r.err) || 'no wallet';
+    };
+    btn.addEventListener('pointerdown', () => { t0 = performance.now(); raf = requestAnimationFrame(step); });
+    btn.addEventListener('pointerup', stop); btn.addEventListener('pointerleave', stop);
+    $('done').onclick = () => { key.textContent = ''; B.close(); };
+  } else if (ctx.mode === 'confirm') {
+    $('confirm').hidden = false;
+    $('ctitle').textContent = ctx.title || 'confirm';
+    for (const l of ctx.lines || []) { const p = document.createElement('p'); p.textContent = l; $('clines').append(p); }
+    if (ctx.amount) { $('camtbox').hidden = false; $('camt').textContent = ctx.amount; }
+    if (ctx.address) { $('caddrbox').hidden = false; $('caddrlbl').textContent = ctx.addressLabel || 'address'; $('caddr').textContent = ctx.address.replace(/(.{4})/g, '$1 ').trim(); }
+    const yes = $('cyes');
+    yes.textContent = ctx.action || 'confirm';
+    if (ctx.danger) yes.classList.add('danger');
+    // armed after a moment, so a click meant for the phone can't land on it
+    setTimeout(() => { yes.disabled = false; }, 1200);
+    yes.onclick = () => B.answer(true);
+    $('cno').onclick = () => B.answer(false);
+  }
+})();
+</script>
+</body>
+</html>

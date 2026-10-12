@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+*.log
+data/
+desktop/
+shots/
+downloads/
+web/src/teaser/
+web/teaser.html
+web/scene-test.html

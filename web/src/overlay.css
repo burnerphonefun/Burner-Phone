@@ -1,0 +1,9 @@
+/* Burner for Windows overlay page. Everything here is see-through except the phone and the banners. ov- prefix. */
+html, body.ov { margin: 0; width: 100%; height: 100%; overflow: hidden; background: transparent !important; }
+body.ov { position: relative; user-select: none; -webkit-user-select: none; cursor: default; }
+/* WASTED in a game: we can't slow the game, so a greyscale still of it pushes in behind the banner */
+.ov-still { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; opacity: 0;
+  filter: grayscale(1) contrast(1.12) brightness(.8); transform: scale(1); transform-origin: 55% 55%;
+  transition: opacity .25s ease, transform 2.6s cubic-bezier(.2,.6,.3,1); }
+.ov-still.ov-in { opacity: 1; transform: scale(1.08); }
+.ov-still.ov-out { opacity: 0; transform: scale(1.08); transition: opacity .55s ease; }

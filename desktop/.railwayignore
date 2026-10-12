@@ -1,0 +1,8 @@
+node_modules/
+app-dist/
+test-shots/
+build/
+dist/win-unpacked/
+dist/.icon-ico/
+dist/*.yml
+dist/*.blockmap

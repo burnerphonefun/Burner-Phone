@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Burner scene test</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  #c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  #hud { position: fixed; left: 8px; top: 8px; font: 12px/1.3 ui-monospace, monospace; color: #fff; text-shadow: 0 1px 2px #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud"></div>
+<script type="module">
+  import { createWorld } from './src/scene/world.js';
+  const q = new URLSearchParams(location.search);
+  const manual = q.has('manual');
+  const w = createWorld(document.getElementById('c'), { world: q.get('world') || 'city', manual, seed: +(q.get('seed') || 7) });
+  window.__world = w;
+  await w.ready;
+  window.__buildMs = w.info().buildMs[q.get('world') || 'city'];
+  if (q.has('gray')) w.fx({ gray: +q.get('gray') || 1, slow: +q.get('gray') || 1, push: +q.get('gray') || 1 });
+  if (manual) w.renderAt(+(q.get('t') || 0));
+  else w.start();
+  document.body.dataset.ready = '1';
+  if (!q.has('nohud')) setInterval(() => { const i = w.info(); document.getElementById('hud').textContent = `${i.world} ${i.fps} fps t=${i.t.toFixed(1)} env=${w.envColor().join(',')}`; }, 500);
+</script>
+</body>
+</html>

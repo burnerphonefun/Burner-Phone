@@ -1,0 +1,73 @@
+{
+  "name": "burner-desktop",
+  "productName": "BurnerPhone",
+  "version": "1.0.0",
+  "private": true,
+  "description": "a burner phone for your bags: live pump.fun on a phone over any game. paper SOL, or import your own wallet and trade for real.",
+  "author": "burner",
+  "main": "main.cjs",
+  "scripts": {
+    "page": "node ../scripts/desktop-build.mjs page",
+    "start": "node ../scripts/desktop-build.mjs page && electron .",
+    "dev": "electron .",
+    "dist": "node ../scripts/desktop-build.mjs dist"
+  },
+  "build": {
+    "appId": "fun.burnerphone.overlay",
+    "productName": "BurnerPhone",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "detect.ps1",
+      "secure-preload.cjs",
+      "secure.html",
+      "trader.cjs",
+      "solana.cjs",
+      "wallet.cjs",
+      "build/tray*.png",
+      "build/icon.png",
+      "app-dist/**"
+    ],
+    "asarUnpack": [
+      "detect.ps1"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "artifactName": "burnerphone-windows.zip"
+    },
+    "compression": "normal",
+    "electronLanguages": [
+      "en-US"
+    ],
+    "npmRebuild": false,
+    "electronFuses": {
+      "runAsNode": false,
+      "enableCookieEncryption": true,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.98.4",
+    "bs58": "^5.0.0",
+    "qrcode": "^1.5.4"
+  }
+}

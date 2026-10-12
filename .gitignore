@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+*.log
+data/
+downloads/
+shots/
+desktop/node_modules/
+desktop/dist/
+desktop/app-dist/
+desktop/test-shots/
+web/src/teaser/plates/

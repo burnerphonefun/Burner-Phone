@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>BurnerPhone</title>
+  <meta name="description" content="a burner phone for your bags. press a key in any game and a phone comes up in your hand with live pump.fun on it. open source, windows.">
+  <meta name="theme-color" content="#0B0A09">
+  <meta property="og:title" content="BurnerPhone">
+  <meta property="og:description" content="a burner phone for your bags. trade pump.fun without leaving the game.">
+  <meta property="og:image" content="/og.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/api/snapshot" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="/poster-blocky.jpg" as="image" fetchpriority="high">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Geist:wght@400;500;600;700;800&family=Pixelify+Sans:wght@400;600;700&family=Lilita+One&family=Share+Tech+Mono&family=Fredoka:wght@500;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body data-world="blocky">
+  <div class="st-boot" aria-hidden="true">
+    <div class="st-boot-logo"><span>B</span><span>U</span><span>R</span><span>N</span><span>E</span><span>R</span></div>
+    <div class="st-boot-logo st-boot-sub"><span>P</span><span>H</span><span>O</span><span>N</span><span>E</span></div>
+    <i class="st-boot-splash">trade mid-mine!</i>
+    <div class="st-boot-bar"><i></i></div>
+    <small class="st-boot-msg">generating world</small>
+  </div>
+
+  <section class="st-hero" id="top">
+    <canvas class="st-world" aria-hidden="true"></canvas>
+    <div class="st-shade" aria-hidden="true"></div>
+    <div class="st-react" aria-hidden="true"></div>
+
+    <!-- each world gets its own game HUD; your paper money / bags drive it -->
+    <div class="hud hud-blocky" aria-hidden="true">
+      <div class="hud-cross"></div>
+      <div class="hud-xp"><i data-bind="xp"></i><b data-bind="level">0</b></div>
+      <div class="hud-hearts"></div>
+      <div class="hud-hotbar"></div>
+    </div>
+    <div class="hud hud-toon" aria-hidden="true">
+      <div class="hud-storm"><b>storm closing</b> <span data-bind="clock">1:24</span></div>
+      <div class="hud-toon-bars"><div class="hud-sh"><i data-bind="bagsbar"></i><b data-bind="bagsn">0</b></div><div class="hud-hp2"><i data-bind="solbar"></i><b data-bind="soln">100</b></div></div>
+      <div class="hud-alive"><b data-bind="alive">71</b> left</div>
+    </div>
+    <div class="hud hud-tactical" aria-hidden="true">
+      <div class="hud-round"><b>13</b><span data-bind="clock">1:24</span><b>11</b></div>
+      <div class="hud-tac-l"><b data-bind="soln">100</b><small>health</small></div>
+      <div class="hud-tac-r"><b data-bind="money">$0</b><small>bank</small></div>
+    </div>
+    <div class="hud hud-obby" aria-hidden="true">
+      <div class="hud-stage">stage <b data-bind="stage">1</b></div>
+      <div class="hud-coins"><i></i><b data-bind="money">$0</b></div>
+    </div>
+    <div class="hud hud-survival" aria-hidden="true">
+      <div class="hud-vitals"><div><i data-bind="solbar"></i><b>health</b></div><div><i data-bind="bagsbar"></i><b>bags</b></div><div><i class="hud-w"></i><b>water</b></div></div>
+    </div>
+    <div class="hud hud-city" aria-hidden="true">
+      <div class="hud-money" data-bind="money">$0</div>
+      <div class="hud-stars"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="hud-map"><div class="hud-map-rot"><svg viewBox="-200 -200 400 400">
+        <rect x="-200" y="-200" width="400" height="400" fill="#7e9a74"/>
+        <path d="M-6 -200 V200 M6 -200 V200" stroke="#e9e4d8" stroke-width="10"/>
+        <path d="M-200 -46 H200 M-200 52 H200" stroke="#e9e4d8" stroke-width="7"/>
+        <path d="M-200 -120 L200 -150" stroke="#e9e4d8" stroke-width="5"/>
+        <rect x="18" y="-36" width="36" height="24" fill="#9db48f"/><rect x="-56" y="10" width="30" height="30" fill="#9db48f"/><rect x="20" y="64" width="40" height="22" fill="#9db48f"/>
+        <circle cx="34" cy="-88" r="6" fill="#FF5A1F" stroke="#fff" stroke-width="2"/>
+      </svg></div><svg class="hud-map-me" viewBox="-12 -12 24 24"><path d="M0 -9 L7 8 L0 4 L-7 8Z" fill="#fff" stroke="#000" stroke-width="1.2"/></svg></div>
+      <div class="hud-bars"><b><i class="hud-hp" data-bind="solbar"></i></b><b><i class="hud-ar" data-bind="bagsbar"></i></b></div>
+    </div>
+
+    <header class="st-top">
+      <a class="st-logo" href="#top">BURNER<span>PHONE</span></a>
+      <span class="st-mob-pitch">a phone for your bags in any game. this one is live, paper SOL ↓</span>
+      <nav><a href="#games">games</a><a href="#real">real trading</a><a href="#get" class="st-nav-gh">github</a></nav>
+    </header>
+
+    <div class="st-pitch">
+      <div class="st-splash" aria-hidden="true">trade mid-mine!</div>
+      <h1><span>a burner phone</span> <span>for your bags.</span></h1>
+      <p>press a key in any game and a phone comes up in your hand with live pump.fun on it. buy, sell, put it away.</p>
+      <div class="st-cta">
+        <a class="st-btn st-btn-main st-btn-gh" href="#get"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>get it on github</a>
+      </div>
+    </div>
+
+    <div class="st-picker" role="tablist" aria-label="pick your game"></div>
+    <button class="st-wst" type="button" aria-label="today's biggest wasted"><small>today's biggest</small><b>WASTED</b><span class="st-wst-row"><i class="st-wst-pf"></i><span><strong></strong><em></em></span></span><u>tap to open the chart</u></button>
+    <div class="st-wipe" aria-hidden="true"></div>
+    <div class="st-keys" aria-hidden="true"><kbd>Q</kbd> phone <kbd>1-6</kbd> game</div>
+  </section>
+
+  <div class="st-ticker" aria-label="live from the trenches"><div class="st-ticker-track"></div></div>
+
+  <main class="st-main">
+    <section class="st-games st-rv" id="games">
+      <h2><span>one phone.</span> <span>every game.</span></h2>
+      <p class="st-lead">burner sees which game is in front and hands you the phone that belongs there. our own art for every genre, no game's names or assets.</p>
+      <div class="st-cards"></div>
+    </section>
+
+    <section class="st-how st-rv" id="how">
+      <h2>how it works</h2>
+      <ol>
+        <li><i>1</i><b>it sits on top, it never touches the game.</b> a see-through window over your screen, like a stream overlay. no mods, no injection, nothing for anti-cheat to see. run the game borderless windowed.</li>
+        <li><i>2</i><b>alt+q, a phone comes up.</b> live launches from pump.fun seconds after they happen, your bags ticking, one tap to buy or sell. press it again and the clicks go straight back to the game.</li>
+        <li><i>3</i><b>paper or real.</b> start on 10 paper SOL with the curve's real slippage and fees. when you're ready, import your own wallet in the app and trade for real.</li>
+      </ol>
+    </section>
+
+    <section class="st-moments st-rv">
+      <div class="st-m st-m-wasted"><b>WASTED</b><p>a bag you hold drops 70% in minutes or the dev dumps: the phone rings, the screen goes grey, the loss slams in.</p></div>
+      <div class="st-m st-m-passed"><b>MISSION PASSED</b><strong class="st-m-count">+0.00 SOL</strong><p>sell for 2x or more and it rolls in gold with the profit counting up.</p></div>
+      <div class="st-m st-m-stamp"><b><em>RUGGED</em><em>BONDED</em></b><p>every rug and every bond in the live list gets stamped on the spot, so you see the trenches move even with no bag.</p></div>
+    </section>
+
+    <section class="st-watch st-rv">
+      <h2>see it in a game</h2>
+      <figure class="st-vid st-vid-hero"><video src="/media/teaser-games.mp4" poster="/media/teaser-games-poster.jpg" muted playsinline loop preload="none"></video><figcaption><b>one phone. every game.</b> six worlds, six phones, one rug</figcaption><button class="st-snd" aria-label="sound">sound off</button></figure>
+      <div class="st-vids">
+        <figure class="st-vid"><video src="/media/teaser-city.mp4" poster="/media/teaser-city-poster.jpg" muted playsinline loop preload="none"></video><figcaption><b>a rug mid-drive</b> then a 4x</figcaption><button class="st-snd" aria-label="sound">sound off</button></figure>
+        <figure class="st-vid"><video src="/media/teaser-blocky.mp4" poster="/media/teaser-blocky-poster.jpg" muted playsinline loop preload="none"></video><figcaption><b>diamond hands</b> through -52% at night</figcaption><button class="st-snd" aria-label="sound">sound off</button></figure>
+      </div>
+    </section>
+
+    <section class="st-real st-rv" id="real">
+      <div class="st-real-copy">
+        <h2><span>trade for real</span> <span>in the app.</span></h2>
+        <p class="st-lead">the windows app takes your own wallet: paste a private key (or make a fresh burner), fund it with a little SOL, and every tap is a real trade mid-game.</p>
+        <ul class="st-checks">
+          <li><b>the key never leaves your pc.</b> it's encrypted by windows on your machine. no server of ours ever sees it.</li>
+          <li><b>every trade is simulated before it's signed.</b> if a transaction would take more SOL than you asked, the app refuses it.</li>
+          <li><b>straight to the chain.</b> trades go from your pc to jupiter or pumpportal and the solana network, not through us.</li>
+          <li><b>open source.</b> read every line on github before you trust it with a cent.</li>
+        </ul>
+        <p class="st-fine">use a burner wallet with only what you'd spend in the trenches. memecoins go to zero all the time; burner is a tool, not advice.</p>
+      </div>
+      <div class="st-real-art" aria-hidden="true">
+        <div class="st-vault"><i></i><i></i><i></i><b>KEY</b><small>encrypted on this pc</small></div>
+      </div>
+    </section>
+
+    <section class="st-get st-rv" id="get">
+      <h2>get burnerphone</h2>
+      <a class="st-repo" href="#" data-gh target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span><b data-gh-name>burner</b><small data-gh-sub>open source on github · windows 10 / 11</small></span>
+        <em>open releases →</em>
+      </a>
+      <ol class="st-steps">
+        <li><b>grab the latest release</b> on github (the zip under assets)</li>
+        <li><b>unzip, run BurnerPhone.exe</b>. it sits in the tray</li>
+        <li><b>alt+q in any game</b>. paper by default, import a wallet when you want it real</li>
+      </ol>
+      <p class="st-get-mobile">it's a windows app. open this page on your pc to get it, or keep paper trading on the phone above.</p>
+      <ul class="st-faq">
+        <li><b>will it get me banned?</b> it doesn't touch any game: no injection, no mods, no reading memory. a transparent window on top, the same way stream overlays work.</li>
+        <li><b>fullscreen games?</b> exclusive fullscreen hides every overlay. switch the game to borderless windowed.</li>
+        <li><b>is my wallet safe?</b> the key is encrypted on your pc and only ever used there. still: use a burner wallet with small amounts.</li>
+        <li><b>windows warning?</b> the app isn't code-signed yet, so smartscreen asks once. more info → run anyway, or build it yourself from the source.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="st-foot">
+    <span class="st-logo">BURNER<span>PHONE</span></span>
+    <span>live data from pump.fun, pumpportal, jupiter, geckoterminal and dex screener. the website is paper trading only. not affiliated with any game.</span>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

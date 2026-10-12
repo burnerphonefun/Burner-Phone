@@ -1,0 +1,148 @@
+/* phone skins for the four extra games. Our own art: every skin is a genre, never a copy of one game's UI. */
+
+/* ---------- toon: a chunky cartoon phone for battle-royale islands ---------- */
+.bp-layer[data-skin='toon'] {
+  --bp-font: 'Lilita One', 'Arial Rounded MT Bold', system-ui, sans-serif; --bp-display: 'Lilita One', 'Arial Rounded MT Bold', sans-serif;
+  --bp-bg: #1b1240; --bp-card: #2c1f63; --bp-card2: #3e2c8a; --bp-line: rgba(255,255,255,.1); --bp-text: #fff; --bp-dim: #b9abff; --bp-grid: rgba(255,255,255,.08); --bp-tabbg: #21164c;
+  --bp-up: #46f08c; --bp-dn: #ff4d6d; --bp-gold: #ffd23f; --bp-accent: #ffd23f;
+  --bp-r: 22px; --bp-r2: 16px; --bp-rad: 76px; --bp-srad: 58px;
+  --bp-band: linear-gradient(160deg, #fff07a 0%, #ffc21c 38%, #ff8f1c 100%);
+  --bp-side: #c7650c; --bp-side2: #1a1033;
+  --bp-apptint: radial-gradient(120% 55% at 15% 0%, rgba(150,110,255,.38) 0%, rgba(150,110,255,0) 70%);
+  --bp-wall:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 780' preserveAspectRatio='xMidYMax slice'%3E%3Cpath d='M-20 640 Q60 560 150 590 T330 560 L380 780 L-20 780Z' fill='%2337c26b'/%3E%3Cpath d='M-20 690 Q90 640 190 660 T380 640 L380 780 L-20 780Z' fill='%2325a356'/%3E%3Cpath d='M-20 730 Q120 700 220 715 T380 705 L380 780 L-20 780Z' fill='%23f1d48a'/%3E%3Ccircle cx='280' cy='150' r='46' fill='%23fff7c2'/%3E%3C/svg%3E") bottom / 100% auto no-repeat,
+    linear-gradient(180deg, #3b7bff 0%, #6fb6ff 45%, #b8e4ff 70%, #ffe2a8 100%);
+}
+.bp-layer[data-skin='toon'] .bp-phone { padding: 16px; box-shadow: 0 0 0 5px #1a1033, inset 0 3px 0 rgba(255,255,255,.65), inset 0 -5px 0 rgba(140,60,0,.35), 6px 5px 0 0 var(--bp-side), 6px 5px 0 5px #1a1033, -18px 28px 0 rgba(26,16,51,.35); }
+.bp-layer[data-skin='toon'] .bp-screen { box-shadow: inset 0 0 0 4px #1a1033; }
+.bp-layer[data-skin='toon'] .bp-glass { inset: 16px; background: linear-gradient(120deg, rgba(255,255,255,.22) 0 14%, transparent 14% 100%); box-shadow: inset 0 0 0 4px #1a1033; }
+.bp-layer[data-skin='toon'] .bp-key { background: #ff8f1c; box-shadow: 0 0 0 3px #1a1033; width: 7px; right: -8px; }
+.bp-layer[data-skin='toon'] .bp-k3 { left: -8px; }
+.bp-layer[data-skin='toon'] .bp-hd h1 { font-size: 42px; letter-spacing: .5px; text-shadow: 0 3px 0 #1a1033; }
+.bp-layer[data-skin='toon'] .bp-lk-time { font-weight: 400; text-shadow: 0 5px 0 #1a1033; -webkit-text-stroke: 2px #1a1033; }
+.bp-layer[data-skin='toon'] .bp-row { border-radius: 16px; }
+.bp-layer[data-skin='toon'] .bp-buy, .bp-layer[data-skin='toon'] .bp-size { border-radius: 14px; background: #46f08c; color: #10331e; box-shadow: 0 4px 0 #1e9a52, 0 0 0 2px #1a1033; }
+.bp-layer[data-skin='toon'] .bp-buy.bp-done { background: #fff; }
+.bp-layer[data-skin='toon'] .bp-btn1 { background: #ffd23f; color: #1a1033; box-shadow: 0 4px 0 #c98f00, 0 0 0 2px #1a1033; border-radius: 16px; }
+.bp-layer[data-skin='toon'] .bp-btn2 { background: #5a44c7; box-shadow: 0 4px 0 #3a2a8c, 0 0 0 2px #1a1033; border-radius: 16px; }
+.bp-layer[data-skin='toon'] .bp-bagcard { background: linear-gradient(150deg, #5a3cff, #2c1f63); box-shadow: 0 0 0 3px #1a1033, inset 0 2px 0 rgba(255,255,255,.25); border-radius: 22px; }
+.bp-layer[data-skin='toon'] .bp-tab.bp-sel i { background: #ffd23f; color: #1a1033; box-shadow: 0 3px 0 #c98f00, 0 0 0 2px #1a1033; }
+.bp-layer[data-skin='toon'] .bp-seg { box-shadow: inset 0 0 0 2px #1a1033; }
+.bp-layer[data-skin='toon'] .bp-seg button.bp-sel { background: #ffd23f; color: #1a1033; }
+.bp-layer[data-skin='toon'] .bp-act, .bp-layer[data-skin='toon'] .bp-note, .bp-layer[data-skin='toon'] .bp-wid { background: rgba(27,18,64,.78); box-shadow: 0 0 0 3px #1a1033; }
+.bp-layer[data-skin='toon'] .bp-island { box-shadow: 0 0 0 3px #1a1033, 0 6px 22px rgba(0,0,0,.45); }
+
+/* ---------- tactical: a rugged green-screen PDA for bomb sites ---------- */
+.bp-layer[data-skin='tactical'] {
+  --bp-font: 'Share Tech Mono', 'Consolas', monospace; --bp-display: 'Share Tech Mono', 'Consolas', monospace;
+  --bp-bg: #06120b; --bp-card: #0c2215; --bp-card2: #12321f; --bp-line: rgba(109,255,158,.14); --bp-text: #bfffd3; --bp-dim: #5fae7c; --bp-grid: rgba(109,255,158,.1); --bp-tabbg: #071a0f;
+  --bp-up: #6dff9e; --bp-dn: #ff6a4d; --bp-gold: #ffd36b; --bp-accent: #ffb23f;
+  --bp-r: 3px; --bp-r2: 2px; --bp-rad: 26px; --bp-srad: 6px;
+  --bp-band: linear-gradient(90deg, #1f241b 0 10px, #2e3527 10px calc(100% - 10px), #1a1e16 calc(100% - 10px));
+  --bp-side: #151912; --bp-side2: #0b0d09;
+  --bp-apptint: radial-gradient(120% 60% at 50% 0%, rgba(109,255,158,.1) 0%, rgba(0,0,0,0) 70%);
+  --bp-wall: linear-gradient(rgba(109,255,158,.07) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, rgba(109,255,158,.07) 1px, transparent 1px) 0 0 / 24px 24px, radial-gradient(90% 60% at 50% 40%, #0e2a18 0%, #040b06 100%);
+}
+.bp-layer[data-skin='tactical'] .bp-phone { inset: -26px -14px -34px; padding: 40px 27px 50px;
+  box-shadow: inset 0 0 0 3px #11140e, inset 0 2px 0 rgba(255,255,255,.12), 5px 4px 0 -1px var(--bp-side), -18px 26px 30px rgba(0,0,0,.45);
+  background-image: radial-gradient(circle at 18px 18px, #4a5240 0 5px, #11140e 5.5px 6.5px, transparent 7px), radial-gradient(circle at calc(100% - 18px) 18px, #4a5240 0 5px, #11140e 5.5px 6.5px, transparent 7px), radial-gradient(circle at 18px calc(100% - 18px), #4a5240 0 5px, #11140e 5.5px 6.5px, transparent 7px), radial-gradient(circle at calc(100% - 18px) calc(100% - 18px), #4a5240 0 5px, #11140e 5.5px 6.5px, transparent 7px), var(--bp-band); }
+.bp-layer[data-skin='tactical'] .bp-phone::after { content: 'BRN-7 FIELD UNIT'; position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; font: 11px/1 'Share Tech Mono', monospace; letter-spacing: 3px; color: #7d8a6c; }
+.bp-layer[data-skin='tactical'] .bp-glass { inset: 40px 27px 50px; border-radius: 6px; background: linear-gradient(135deg, rgba(255,255,255,.06) 0 22%, transparent 22% 100%); box-shadow: inset 0 0 0 2px #000, inset 0 0 40px rgba(0,0,0,.6); }
+.bp-layer[data-skin='tactical'] .bp-screen { text-shadow: 0 0 6px rgba(109,255,158,.45); }
+.bp-layer[data-skin='tactical'] .bp-screen::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 60; background: repeating-linear-gradient(180deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px); }
+.bp-layer[data-skin='tactical'] .bp-key { background: #2e3527; width: 8px; right: -10px; border-radius: 2px; }
+.bp-layer[data-skin='tactical'] .bp-k3 { left: -10px; }
+.bp-layer[data-skin='tactical'] .bp-hd h1 { text-transform: uppercase; font-size: 30px; letter-spacing: 3px; }
+.bp-layer[data-skin='tactical'] .bp-hd h1::before { content: '> '; color: var(--bp-accent); }
+.bp-layer[data-skin='tactical'] .bp-lk-time { font-weight: 400; letter-spacing: 4px; }
+.bp-layer[data-skin='tactical'] .bp-island { display: none; }
+.bp-layer[data-skin='tactical'] .bp-row { border-radius: 2px; }
+.bp-layer[data-skin='tactical'] .bp-row::after { background: rgba(109,255,158,.12); }
+.bp-layer[data-skin='tactical'] .bp-buy, .bp-layer[data-skin='tactical'] .bp-size { border-radius: 2px; background: transparent; box-shadow: inset 0 0 0 1px var(--bp-up); }
+.bp-layer[data-skin='tactical'] .bp-btn1 { border-radius: 2px; background: var(--bp-accent); color: #140b00; text-transform: uppercase; }
+.bp-layer[data-skin='tactical'] .bp-btn2 { border-radius: 2px; background: transparent; box-shadow: inset 0 0 0 1px var(--bp-dim); text-transform: uppercase; }
+.bp-layer[data-skin='tactical'] .bp-bagcard { border-radius: 2px; background: #0c2215; box-shadow: inset 0 0 0 1px rgba(255,178,63,.6); }
+.bp-layer[data-skin='tactical'] .bp-seg, .bp-layer[data-skin='tactical'] .bp-seg button { border-radius: 2px; }
+.bp-layer[data-skin='tactical'] .bp-seg button.bp-sel { background: var(--bp-up); color: #04140a; text-shadow: none; }
+.bp-layer[data-skin='tactical'] .bp-tab i { border-radius: 2px; }
+.bp-layer[data-skin='tactical'] .bp-tab.bp-sel i { background: var(--bp-up); color: #04140a; box-shadow: 0 0 14px rgba(109,255,158,.5); }
+.bp-layer[data-skin='tactical'] .bp-act, .bp-layer[data-skin='tactical'] .bp-note, .bp-layer[data-skin='tactical'] .bp-wid, .bp-layer[data-skin='tactical'] .bp-lk-btn { border-radius: 2px; background: rgba(6,18,11,.85); box-shadow: inset 0 0 0 1px rgba(109,255,158,.3); }
+.bp-layer[data-skin='tactical'] .bp-status { color: var(--bp-up); }
+
+/* ---------- obby: a glossy toy phone for plastic-block worlds ---------- */
+.bp-layer[data-skin='obby'] {
+  --bp-font: 'Fredoka', 'Nunito', system-ui, sans-serif; --bp-display: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --bp-bg: #f3f6ff; --bp-card: #ffffff; --bp-card2: #e3eaff; --bp-line: rgba(29,42,82,.08); --bp-text: #1d2a52; --bp-dim: #6b79a9; --bp-grid: rgba(29,42,82,.08); --bp-tabbg: #ffffff;
+  --bp-up: #12b45a; --bp-dn: #ff3b4f; --bp-gold: #f7a600; --bp-accent: #2f7bff;
+  --bp-r: 18px; --bp-r2: 14px; --bp-rad: 46px; --bp-srad: 30px;
+  --bp-band: linear-gradient(160deg, #ff7a86 0%, #ff3b4f 40%, #d81f35 100%);
+  --bp-side: #a8142a; --bp-side2: #5e0a17;
+  --bp-apptint: radial-gradient(120% 55% at 15% 0%, rgba(47,123,255,.12) 0%, rgba(47,123,255,0) 70%);
+  --bp-wall: radial-gradient(circle at 12px 12px, rgba(255,255,255,.55) 0 5px, rgba(0,0,0,.12) 5.5px 6.5px, transparent 7px) 0 0 / 24px 24px, linear-gradient(160deg, #2f7bff, #6ab0ff);
+}
+.bp-layer[data-skin='obby'] .bp-phone { padding: 15px; box-shadow: inset 0 3px 0 rgba(255,255,255,.55), inset 0 -4px 0 rgba(90,0,15,.35), 5px 4px 0 -1px var(--bp-side), -16px 24px 30px rgba(20,30,80,.35); }
+.bp-layer[data-skin='obby'] .bp-phone::before { content: ''; position: absolute; left: 70px; right: 70px; top: -9px; height: 12px; border-radius: 6px 6px 0 0;
+  background: radial-gradient(ellipse 13px 9px at 50% 100%, #ff5262 0 92%, transparent 100%) 0 0 / 40px 12px repeat-x; filter: drop-shadow(0 -1px 0 rgba(255,255,255,.4)); }
+.bp-layer[data-skin='obby'] .bp-glass { inset: 15px; background: linear-gradient(125deg, rgba(255,255,255,.35) 0 10%, transparent 10% 100%); box-shadow: inset 0 0 0 2px rgba(0,0,0,.18); }
+.bp-layer[data-skin='obby'] .bp-key { background: #ff3b4f; }
+.bp-layer[data-skin='obby'] .bp-status, .bp-layer[data-skin='obby'] .bp-batt { color: #1d2a52; border-color: rgba(29,42,82,.5); }
+.bp-layer[data-skin='obby'] .bp-batt::after { background: rgba(29,42,82,.5); }
+.bp-layer[data-skin='obby'] .bp-screen[data-view='lock'] .bp-status, .bp-layer[data-skin='obby'] .bp-screen[data-view='home'] .bp-status { color: #fff; }
+.bp-layer[data-skin='obby'] .bp-hd h1 { font-weight: 700; color: #1d2a52; }
+.bp-layer[data-skin='obby'] .bp-lk-time { font-weight: 700; text-shadow: 0 4px 0 rgba(20,40,120,.35); }
+.bp-layer[data-skin='obby'] .bp-row { background: #fff; box-shadow: 0 2px 0 rgba(29,42,82,.08); border-radius: 16px; height: 54px; }
+.bp-layer[data-skin='obby'] .bp-row::after { display: none; }
+.bp-layer[data-skin='obby'] .bp-buy, .bp-layer[data-skin='obby'] .bp-size { border-radius: 12px; background: #12b45a; color: #fff; box-shadow: 0 3px 0 #0a7d3d; }
+.bp-layer[data-skin='obby'] .bp-btn1 { background: #ff3b4f; color: #fff; box-shadow: 0 3px 0 #b81c2e; border-radius: 14px; }
+.bp-layer[data-skin='obby'] .bp-btn2 { background: #2f7bff; color: #fff; box-shadow: 0 3px 0 #1a52b8; border-radius: 14px; }
+.bp-layer[data-skin='obby'] .bp-bagcard { background: linear-gradient(150deg, #2f7bff, #6ab0ff); color: #fff; box-shadow: 0 4px 0 #1a52b8; border-radius: 20px; }
+.bp-layer[data-skin='obby'] .bp-bagcard .bp-bc-nm small, .bp-layer[data-skin='obby'] .bp-bagcard .bp-bc-r small { color: #e3eeff; }
+.bp-layer[data-skin='obby'] .bp-bagcard [data-dir='up'] { color: #fff; }
+.bp-layer[data-skin='obby'] .bp-tab { color: #9aa6cc; }
+.bp-layer[data-skin='obby'] .bp-tab.bp-sel { color: #1d2a52; }
+.bp-layer[data-skin='obby'] .bp-tab.bp-sel i { background: #2f7bff; color: #fff; box-shadow: 0 3px 0 #1a52b8; }
+.bp-layer[data-skin='obby'] .bp-tabs { border-top-color: rgba(29,42,82,.08); }
+.bp-layer[data-skin='obby'] .bp-homebar { background: rgba(29,42,82,.35); }
+.bp-layer[data-skin='obby'] .bp-seg button.bp-sel { background: #2f7bff; color: #fff; }
+.bp-layer[data-skin='obby'] .bp-act, .bp-layer[data-skin='obby'] .bp-note, .bp-layer[data-skin='obby'] .bp-wid, .bp-layer[data-skin='obby'] .bp-lk-btn { background: rgba(255,255,255,.88); color: #1d2a52; box-shadow: 0 4px 0 rgba(20,40,120,.25); }
+.bp-layer[data-skin='obby'] .bp-act-nm small, .bp-layer[data-skin='obby'] .bp-note-tx small, .bp-layer[data-skin='obby'] .bp-wid small { color: #6b79a9; }
+.bp-layer[data-skin='obby'] .bp-island { background: #1d2a52; }
+.bp-layer[data-skin='obby'] .bp-ch-box { background: #fff; }
+
+/* ---------- survival: a battered metal walkie-phone for rusty islands ---------- */
+.bp-layer[data-skin='survival'] {
+  --bp-font: 'Oswald', 'Arial Narrow', system-ui, sans-serif; --bp-display: 'Oswald', 'Arial Narrow', sans-serif;
+  --bp-bg: #14100c; --bp-card: #221a13; --bp-card2: #30251b; --bp-line: rgba(241,227,207,.08); --bp-text: #f1e3cf; --bp-dim: #a58d72; --bp-grid: rgba(241,227,207,.07); --bp-tabbg: #1a140f;
+  --bp-up: #a4d96e; --bp-dn: #e4583b; --bp-gold: #eaa43c; --bp-accent: #d8752b;
+  --bp-r: 6px; --bp-r2: 4px; --bp-rad: 28px; --bp-srad: 14px;
+  --bp-band: radial-gradient(circle at 30% 20%, rgba(255,170,90,.25), transparent 40%), linear-gradient(115deg, #6e5a4a 0%, #4a3a2e 25%, #8a5a3a 46%, #3b2f26 70%, #6b4c36 100%);
+  --bp-side: #3a2a1e; --bp-side2: #1a120c;
+  --bp-apptint: radial-gradient(120% 55% at 15% 0%, rgba(216,117,43,.18) 0%, rgba(0,0,0,0) 70%);
+  --bp-wall:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 780' preserveAspectRatio='xMidYMax slice'%3E%3Cg fill='%23140d08'%3E%3Cpath d='M0 640 L40 600 L90 612 L120 586 L170 600 L230 570 L300 592 L360 580 L360 780 L0 780Z'/%3E%3Crect x='70' y='560' width='70' height='44'/%3E%3Cpath d='M64 562 L105 536 L146 562Z'/%3E%3Crect x='240' y='548' width='56' height='50'/%3E%3C/g%3E%3Ccircle cx='190' cy='610' r='6' fill='%23ffb35a'/%3E%3C/svg%3E") bottom / 100% auto no-repeat,
+    linear-gradient(180deg, #2b2233 0%, #6a3b3a 40%, #c4643a 72%, #e89a4f 100%);
+}
+.bp-layer[data-skin='survival'] .bp-phone { padding: 18px;
+  background-image: radial-gradient(circle at 14px 14px, #2a2018 0 3px, transparent 3.5px), radial-gradient(circle at calc(100% - 14px) 14px, #2a2018 0 3px, transparent 3.5px), radial-gradient(circle at 14px calc(100% - 14px), #2a2018 0 3px, transparent 3.5px), radial-gradient(circle at calc(100% - 14px) calc(100% - 14px), #2a2018 0 3px, transparent 3.5px), var(--bp-band);
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.5), inset 0 2px 0 rgba(255,220,180,.25), 5px 4px 0 -1px var(--bp-side), -18px 26px 34px rgba(20,8,0,.5); }
+.bp-layer[data-skin='survival'] .bp-phone::before { content: ''; position: absolute; right: 54px; top: -46px; width: 14px; height: 54px; border-radius: 6px 6px 2px 2px; background: linear-gradient(90deg, #2a2018, #4a3a2e, #2a2018); }
+.bp-layer[data-skin='survival'] .bp-glass { inset: 18px; border-radius: 14px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 780'%3E%3Cg stroke='rgba(255,255,255,0.32)' stroke-width='1.2' fill='none'%3E%3Cpath d='M300 40 L262 120 L282 180 L236 260'/%3E%3Cpath d='M262 120 L210 140 L170 128'/%3E%3Cpath d='M282 180 L330 210'/%3E%3Cpath d='M236 260 L246 330'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat, linear-gradient(128deg, rgba(255,255,255,.1) 0%, rgba(255,255,255,0) 30%);
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.6), inset 0 0 30px rgba(0,0,0,.45); }
+.bp-layer[data-skin='survival'] .bp-key { background: linear-gradient(90deg, #3b2f26, #6b4c36); }
+.bp-layer[data-skin='survival'] .bp-hd h1 { text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 36px; }
+.bp-layer[data-skin='survival'] .bp-lk-time { font-weight: 700; }
+.bp-layer[data-skin='survival'] .bp-row { border-radius: 6px; }
+.bp-layer[data-skin='survival'] .bp-buy, .bp-layer[data-skin='survival'] .bp-size { border-radius: 4px; background: rgba(164,217,110,.14); }
+.bp-layer[data-skin='survival'] .bp-btn1 { border-radius: 4px; background: var(--bp-accent); color: #1a0d03; text-transform: uppercase; font-weight: 700; }
+.bp-layer[data-skin='survival'] .bp-btn2 { border-radius: 4px; text-transform: uppercase; }
+.bp-layer[data-skin='survival'] .bp-bagcard { border-radius: 8px; background: linear-gradient(140deg, #3a2414, #1c140e); box-shadow: inset 0 0 0 1px rgba(216,117,43,.45); }
+.bp-layer[data-skin='survival'] .bp-tab.bp-sel i { background: var(--bp-accent); color: #1a0d03; box-shadow: 0 0 14px rgba(216,117,43,.5); }
+.bp-layer[data-skin='survival'] .bp-seg button.bp-sel { background: #3b2d20; }
+.bp-layer[data-skin='survival'] .bp-act, .bp-layer[data-skin='survival'] .bp-note, .bp-layer[data-skin='survival'] .bp-wid { border-radius: 8px; background: rgba(20,14,10,.78); }
+
+/* rug call text stays light on the red call screen in skins with dark text */
+.bp-layer[data-skin='blocky'] .bp-call, .bp-layer[data-skin='obby'] .bp-call { color: #fff; }
+.bp-layer[data-skin='blocky'] .bp-call p, .bp-layer[data-skin='obby'] .bp-call p { color: #ffc9cf; }
+.bp-layer[data-skin='blocky'] .bp-call-lt, .bp-layer[data-skin='obby'] .bp-call-lt { color: #f3b3ba; }
+.bp-layer[data-skin='blocky'] .bp-call-loss { color: #ff6a5e; text-shadow: 4px 4px 0 #3a0806; }

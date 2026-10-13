@@ -40,3 +40,37 @@ jobs:
 
       - name: real-wallet guard and key handling (offline)
         run: node scripts/wallet-real-test.mjs --offline --no-electron
+
+  game-detector:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: desktop/detect
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: format
+        run: cargo fmt --check
+
+      - name: lint
+        run: cargo clippy --release -- -D warnings
+
+      - name: unit tests
+        run: cargo test
+
+      - name: build
+        run: cargo build --release
+
+      - name: the app's detector code against the helper and the PowerShell + C# fallback
+        working-directory: .
+        run: node scripts/detect-test.mjs desktop/detect/target/release/burner-detect.exe
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: burner-detect
+          path: desktop/detect/target/release/burner-detect.exe

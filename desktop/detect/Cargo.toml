@@ -1,0 +1,17 @@
+[package]
+name = "burner-detect"
+version = "1.0.0"
+edition = "2021"
+description = "BurnerPhone's game detector: the foreground window's process name and title, one line every 2 s"
+license = "MIT"
+publish = false
+
+# No dependencies: the four Windows calls it needs are declared by hand in src/win.rs.
+[dependencies]
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

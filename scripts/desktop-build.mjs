@@ -1,11 +1,13 @@
-// node scripts/desktop-build.mjs page|icon|dist
+// node scripts/desktop-build.mjs page|icon|detector|dist
 //   page: build the overlay page into desktop/app-dist (+ config.json with the API base)
 //   icon: render web/public/favicon.svg to desktop/build/icon.png (256) and tray.png (32) with the installed Chrome
-//   dist: page + icon + electron-builder → desktop/dist/burner-windows.zip
+//   detector: cargo build the Rust game detector (desktop/detect) → desktop/bin/burner-detect.exe
+//   dist: page + icon + detector + electron-builder → desktop/dist/burner-windows.zip
 // BURNER_API=https://... bakes the live server into the app (default http://localhost:8787 for dev).
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync, renameSync, rmSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync, renameSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { homedir } from 'node:os';
 
 const APP = resolve(import.meta.dirname, '..');
 const DESK = join(APP, 'desktop');
@@ -61,14 +63,32 @@ async function icon(force) {
   console.log('icons → desktop/build/icon.png, tray.png');
 }
 
+// the Rust game detector. No cargo: the app ships without it and uses PowerShell + detect.cs (with a warning here).
+function detector(required) {
+  const cargo = [process.env.CARGO, join(homedir(), '.cargo', 'bin', 'cargo.exe'), 'cargo']
+    .find((c) => c && spawnSync(c, ['--version'], { stdio: 'ignore' }).status === 0);
+  if (!cargo) {
+    if (required) { console.error('no cargo found (install Rust from rustup.rs)'); process.exit(1); }
+    console.warn('warning: no cargo, so no burner-detect.exe: the app will detect games with PowerShell');
+    return;
+  }
+  const crate = join(DESK, 'detect');
+  run(cargo, ['build', '--release', '--quiet', '--manifest-path', join(crate, 'Cargo.toml')], crate);
+  mkdirSync(join(DESK, 'bin'), { recursive: true });
+  copyFileSync(join(crate, 'target', 'release', 'burner-detect.exe'), join(DESK, 'bin', 'burner-detect.exe'));
+  console.log('game detector built → desktop/bin/burner-detect.exe');
+}
+
 if (cmd === 'page') page();
 else if (cmd === 'icon') await icon(true);
+else if (cmd === 'detector') detector(true);
 else if (cmd === 'dist') {
   if (!process.env.BURNER_API) console.warn('warning: BURNER_API not set, the app will look for a server on localhost:8787');
   await icon(false);
   page();
+  detector(false);
   rmSync(join(DESK, 'dist'), { recursive: true, force: true });
   run('npx', ['electron-builder', '--win', 'zip', '--x64', '--publish', 'never'], DESK);
   const zip = join(DESK, 'dist', 'burner-windows.zip');
   if (existsSync(zip)) console.log('built ' + zip);
-} else { console.error('usage: desktop-build.mjs page|icon|dist'); process.exit(1); }
+} else { console.error('usage: desktop-build.mjs page|icon|detector|dist'); process.exit(1); }

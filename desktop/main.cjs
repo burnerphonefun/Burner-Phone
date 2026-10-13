@@ -181,10 +181,11 @@ function setUp(v) {
   rebuildTray();
 }
 
-// ---------- which game is in front: one long-lived PowerShell, a line every 2 s ----------
+// ---------- which game is in front: bin/burner-detect.exe (Rust), else PowerShell + detect.cs; a line every 2 s ----------
 function skinFor(name, title) {
   const n = String(name || '').toLowerCase();
-  if (!n || n === 'electron' || n === 'burner') return null; // ourselves or nothing: keep the current skin
+  // ourselves (the raised phone and the wallet window take focus) or nothing: keep the current skin
+  if (!n || n === 'electron' || n === 'burner' || n === 'burnerphone') return null;
   if (n === 'gta5' || n === 'gta5_enhanced') return 'city';
   if (n === 'fortniteclient-win64-shipping') return 'toon';
   if (n === 'cs2' || n === 'valorant-win64-shipping') return 'tactical';
@@ -194,33 +195,46 @@ function skinFor(name, title) {
   if ((n === 'javaw' || n === 'java') && /minecraft/i.test(title || '')) return 'blocky';
   return 'default';
 }
-let detectFails = 0;
+let detectFails = 0, nativeFails = 0;
 function startDetector() {
   if (process.platform !== 'win32' || quitting) return;
+  // the native helper (a few MB of memory, exits with us); PowerShell if it's missing or died twice without a line
+  const exe = path.join(UNPACKED, 'bin', 'burner-detect.exe');
+  const native = nativeFails < 2 && fs.existsSync(exe);
   const ps1 = path.join(UNPACKED, 'detect.ps1');
+  let lines = 0, over = false;
   try {
-    detector = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-File', ps1], { windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] });
-  } catch (e) { console.error('detector spawn failed', e.message); return; }
+    detector = native
+      ? spawn(exe, [], { windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] })
+      : spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-File', ps1], { windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] });
+  } catch (e) { console.error('detector spawn failed', e.message); if (native) { nativeFails++; startDetector(); } return; }
+  const child = detector;
   let buf = '';
-  detector.stdout.setEncoding('utf8');
-  detector.stdout.on('data', (chunk) => {
+  child.stdout.setEncoding('utf8');
+  child.stdout.on('data', (chunk) => {
     buf += chunk;
     let i;
     while ((i = buf.indexOf('\n')) >= 0) {
       const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
       if (!line) continue;
-      detectFails = 0;
+      lines++; detectFails = 0;
       const bar = line.indexOf('|');
       const s = skinFor(line.slice(0, bar), line.slice(bar + 1));
       if (s && s !== detected) { detected = s; if (!override) send('skin', skin()); rebuildTray(); }
     }
   });
-  detector.on('exit', () => {
-    detector = null;
+  // 'error' (it couldn't start) and 'exit' can both fire: restart once
+  const ended = () => {
+    if (over) return;
+    over = true;
+    if (detector === child) detector = null;
     if (quitting) return;
+    if (native && !lines) nativeFails++;
     detectFails++;
     setTimeout(startDetector, Math.min(60000, 2000 * detectFails));
-  });
+  };
+  child.on('error', (e) => { console.error('detector error', e.message); ended(); });
+  child.on('exit', ended);
 }
 
 // ---------- tray ----------

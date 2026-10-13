@@ -1,7 +1,7 @@
 {
   "name": "burner-desktop",
   "productName": "BurnerPhone",
-  "version": "1.0.0",
+  "version": "2.4.0",
   "private": true,
   "description": "a burner phone for your bags: live pump.fun on a phone over any game. paper SOL, or import your own wallet and trade for real.",
   "author": "burner",
@@ -23,6 +23,8 @@
       "main.cjs",
       "preload.cjs",
       "detect.ps1",
+      "detect.cs",
+      "bin/burner-detect.exe",
       "secure-preload.cjs",
       "secure.html",
       "trader.cjs",
@@ -33,7 +35,9 @@
       "app-dist/**"
     ],
     "asarUnpack": [
-      "detect.ps1"
+      "detect.ps1",
+      "detect.cs",
+      "bin/**"
     ],
     "win": {
       "target": [

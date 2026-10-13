@@ -10,3 +10,5 @@ desktop/dist/
 desktop/app-dist/
 desktop/test-shots/
 web/src/teaser/plates/
+desktop/bin/
+desktop/detect/target/

@@ -257,8 +257,13 @@ export function createPhone(host, opts) {
     const side = full.querySelector('.bp-isl-side'); setText(side, n.side || ''); side.dataset.dir = n.tone || '';
     island.dataset.tone = n.tone || '';
     island.classList.add('bp-isl-open');
-    await wait(n.ms || 2600);
-    island.classList.remove('bp-isl-open');
+    // a note with tap() can be tapped while it's open (and closes at once); the rest are look-only
+    let cut;
+    island.classList.toggle('bp-isl-tap', !!n.tap);
+    island.onclick = n.tap ? (e) => { e.stopPropagation(); island.onclick = null; n.tap(); cut?.(); } : null;
+    await Promise.race([wait(n.ms || 2600), new Promise((r) => { cut = r; })]);
+    island.onclick = null;
+    island.classList.remove('bp-isl-open', 'bp-isl-tap');
     await wait(260);
     nextNote();
   }

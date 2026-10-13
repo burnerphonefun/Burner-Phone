@@ -32,6 +32,9 @@ jobs:
       - name: paper wallet, curve, rug watch
         run: node scripts/wallet-test.mjs
 
+      - name: today's biggest rug ignores fake market caps
+        run: node scripts/wasted-test.mjs
+
       - name: install (desktop wallet deps, no electron binary)
         working-directory: desktop
         env:

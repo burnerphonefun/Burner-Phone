@@ -321,25 +321,31 @@ async function showWasted() {
     if (!r || document.hidden) return;
     try { if (sessionStorage.getItem('burner.wst') === r.mint) return; sessionStorage.setItem('burner.wst', r.mint); } catch {}
     wstMint = r.mint;
+    const fall = usd(r.peakMc) + ' → ' + usd(r.rugMc) + (r.born && r.at > r.born ? ' · ' + age(r.at - r.born) + ' after launch' : '');
+    // on a phone the visitor's screen is the burner: the rug rings in as its own notification, tap it for the chart
+    if (mobile) {
+      phone.notify({ title: "today's biggest WASTED", body: tick(r.sym) + '  ' + fall, side: '-' + Math.round((1 - r.rugMc / r.peakMc) * 100) + '%', tone: 'dn',
+        coin: { mint: r.mint, symbol: r.sym }, quiet: true, ms: 6500, tap: () => openWasted() });
+      return;
+    }
     wst.querySelector('small').textContent = "today's biggest" + (d.count > 1 ? ' · ' + d.count + ' rugs so far' : '');
     wst.querySelector('strong').textContent = tick(r.sym) + (r.name && r.name.toLowerCase() !== r.sym.toLowerCase() ? '  ' + r.name : '');
-    wst.querySelector('em').textContent = usd(r.peakMc) + ' → ' + usd(r.rugMc) + (r.born && r.at > r.born ? ' · ' + age(r.at - r.born) + ' after launch' : '') + ' · ' + age(Date.now() - r.at) + ' ago';
+    wst.querySelector('em').textContent = fall + ' · ' + age(Date.now() - r.at) + ' ago';
     const pf = wst.querySelector('.st-wst-pf'); pf.style.backgroundImage = `url(${net.img(r.mint)})`;
     wst.classList.add('st-on');
     wstT = setTimeout(hideWasted, 8000);
   } catch {}
 }
 wst.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') clearTimeout(wstT); });
-// on a phone it sits over the tab bar, so any tap elsewhere puts it away
-addEventListener('pointerdown', (e) => { if (wst.classList.contains('st-on') && !wst.contains(e.target)) hideWasted(); }, true);
 wst.addEventListener('pointerleave', () => { if (wst.classList.contains('st-on')) wstT = setTimeout(hideWasted, 2500); });
-wst.addEventListener('click', () => {
+function openWasted() {
   if (!wstMint) return;
   hideWasted();
   if (mobile) phoneHost.scrollIntoView({ behavior: 'smooth', block: 'center' }); else phone.raise();
   if (phone.view() === 'lock') phone.unlock();
   phone.open('chart', { mint: wstMint, tf: '5m', fit: true, rugged: true });
-});
+}
+wst.addEventListener('click', openWasted);
 setTimeout(() => { if (!params.has('still')) showWasted(); }, mobile ? 12000 : 9000);
 net.on('grad', (m) => pushEvent('grad', m.mint));
 net.on('new', (c) => { if (events.filter((e) => e.kind === 'new').length < 6) pushEvent('new', c.mint); });

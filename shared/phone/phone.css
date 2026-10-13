@@ -78,6 +78,7 @@
   transition: width .38s cubic-bezier(.3,1.3,.5,1), height .38s cubic-bezier(.3,1.3,.5,1), margin-left .38s cubic-bezier(.3,1.3,.5,1), border-radius .38s; box-shadow: 0 6px 22px rgba(0,0,0,.45); pointer-events: none; }
 .bp-island.bp-isl-live { width: 176px; margin-left: -88px; }
 .bp-island.bp-isl-open { width: 334px; height: 66px; margin-left: -167px; border-radius: 33px; }
+.bp-island.bp-isl-tap { pointer-events: auto; cursor: pointer; }
 .bp-isl-compact, .bp-isl-full { position: absolute; inset: 0; display: flex; align-items: center; transition: opacity .2s; }
 .bp-isl-compact { padding: 0 12px 0 6px; justify-content: space-between; opacity: 0; }
 .bp-isl-live .bp-isl-compact { opacity: 1; }
@@ -222,6 +223,8 @@
 .bp-tab-bonding .bp-row-m .bp-prog { display: block; }
 .bp-tab-bonding .bp-row-m small { color: var(--bp-gold); }
 .bp-row.bp-held .bp-row-nm b::after { content: ' · held'; color: var(--bp-accent); font-weight: 600; font-size: 11px; }
+.bp-row.bp-copy .bp-row-nm small::before { content: 'copy · '; color: var(--bp-gold); font-weight: 650; }
+.bp-row-nm small[data-n]::before { content: '×' attr(data-n) ' · '; color: var(--bp-gold); font-weight: 650; }
 .bp-row.bp-rugged > :not(.bp-stamp) { opacity: .45; }
 .bp-stamp { position: absolute; right: 64px; top: 50%; margin-top: -13px; height: 26px; padding: 0 8px; display: grid; place-items: center; font: 900 17px/1 var(--bp-display); letter-spacing: 1.5px;
   border: 2.5px solid currentColor; border-radius: 5px; transform: rotate(-9deg); pointer-events: none; animation: bp-stamp 220ms cubic-bezier(.2,.9,.3,1.2) 1 both; }
@@ -427,7 +430,11 @@
 .bp-layer[data-skin='blocky'] .bp-screen { border-radius: 0; color: var(--bp-text); }
 .bp-layer[data-skin='blocky'] .bp-wall { opacity: 0; }
 .bp-layer[data-skin='blocky'] .bp-screen[data-view='lock'] .bp-wall, .bp-layer[data-skin='blocky'] .bp-screen[data-view='home'] .bp-wall { opacity: 1; }
-.bp-layer[data-skin='blocky'] .bp-island { display: none; }
+/* no island on a pixel phone: the same notifications drop in as a stone toast under the status bar (opacity/transform only) */
+.bp-layer[data-skin='blocky'] .bp-island, .bp-layer[data-skin='blocky'] .bp-island.bp-isl-open { top: 48px; width: 334px; height: 66px; margin-left: -167px; border-radius: 0;
+  background: #3b3b3b; box-shadow: inset 3px 3px 0 #5c5c5c, inset -3px -3px 0 #1c1c1c, 0 4px 0 rgba(0,0,0,.35); transition: opacity .16s, transform .28s cubic-bezier(.3,1.4,.5,1); }
+.bp-layer[data-skin='blocky'] .bp-island:not(.bp-isl-open) { opacity: 0; transform: translate3d(0,-14px,0); }
+.bp-layer.bp-mobile[data-skin='blocky'] .bp-island { top: 8px; }
 .bp-layer[data-skin='blocky'] .bp-status { color: #2d2d2d; background: #a4a4a4; height: 40px; padding-top: 6px; box-shadow: inset 0 -3px 0 #6f6f6f; }
 .bp-layer[data-skin='blocky'] .bp-batt { border-color: #2d2d2d; border-radius: 0; }
 .bp-layer[data-skin='blocky'] .bp-batt::after { background: #2d2d2d; border-radius: 0; }

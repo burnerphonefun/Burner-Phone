@@ -31,6 +31,7 @@ const snap = JSON.parse(readFileSync(SNAP, 'utf8'));
 const sol = snap.sol || 111.5;
 
 function build(story) {
+  if (story === 'any') return buildAny();
   const now = Date.parse(story === 'city' ? '2026-10-12T19:42:00' : story === 'games' ? '2026-10-12T21:07:00' : '2026-10-12T23:17:00');
   const by = new Map(snap.coins.map((c) => [c.mint, { ...c }]));
   const ages = [3, 9, 15, 22, 30, 41, 55, 68, 84, 101, 122, 150, 180, 220];
@@ -71,6 +72,49 @@ function build(story) {
   return { now, hello, wallet, hist, entry, rug, good, milo, nc };
 }
 
+// v2.5 ("type any amount"): the New tab as it really comes in, copycats and all (the phone folds them itself), plus one
+// big burst: 11 more copies of The Hugging Cat, whose real leader sits at ~$15.6K. No position at first (the list is
+// the star); the ConConAI bag gets staged before the pixel act.
+function buildAny() {
+  const now = Date.parse('2026-10-13T20:14:00');
+  const by = new Map(snap.coins.map((c) => [c.mint, { ...c }]));
+  const lead = [...by.values()].find((c) => c.name === 'The Hugging Cat' && c.mc > 10000);
+  const clones = Array.from({ length: 11 }, (_, i) => {
+    const mc = 3050 + i * 23;
+    return { ...lead, mint: 'teaser-hug-' + i, mc, p: mc / (1e9 * sol), b1: [1, 0, 2, 1, 0, 3, 1, 0, 2, 1, 0][i], flags: 0, complete: false };
+  });
+  for (const c of clones) by.set(c.mint, c);
+  const base = snap.lists.new.filter((m) => by.get(m) && ![GOOD, NEWC].includes(m));
+  const newList = [];
+  base.forEach((m, i) => { if (i < clones.length) newList.push(clones[i].mint); newList.push(m); });
+  // the real leader is part of the burst it leads (and inside the 40 the server sends)
+  if (newList.includes(lead.mint)) newList.splice(newList.indexOf(lead.mint), 1);
+  newList.splice(17, 0, lead.mint);
+  newList.forEach((m, i) => { const c = by.get(m); c.created = now - Math.round(1 + i * 3.7) * 1000; if (c.b1 == null) c.b1 = [3, 7, 12, 5, 9, 18, 4, 11, 6, 14, 8, 2][i % 12]; });
+  lead.created = now - 140e3; lead.b1 = 64;
+  const good = by.get(GOOD); good.created = now - 21 * 60e3;
+  // the bag curve for the pixel act, as in build()
+  const ks = snap.goodCandles.map((k) => [k[0] < 1e12 ? k[0] * 1000 : k[0], +k[4]]).filter(([, p]) => p > 0);
+  const shift = now - ks[ks.length - 1][0];
+  const hist = ks.map(([t, p]) => [t + shift, p]);
+  const target = good.p / 3.14;
+  let i = hist.findIndex(([, p]) => p >= target); if (i < 1) i = 1;
+  const [ta, pa] = hist[i - 1], [tb, pb] = hist[i];
+  const f = Math.min(1, Math.max(0, (Math.log(target) - Math.log(pa)) / (Math.log(pb) - Math.log(pa) || 1)));
+  const entry = [ta + (tb - ta) * f, target];
+  hist.splice(i, 0, entry);
+  const hello = {
+    t: 'hello', v: 1, now, sol,
+    coins: [...by.values()],
+    lists: { new: newList.slice(0, 40), rising: snap.lists.rising.slice(0, 12), bonding: snap.lists.bonding.slice(0, 12) },
+    stats: { lpm: 11, up: { stream: true, jup: true, trades: true } },
+  };
+  const ach = { 'first-buy': 1, '2x': 1, wasted: 1, camera: 1, diamond: 1, veteran: 1 };
+  const stats = { buys: 6, sells: 4, wins: 3, rugs: 1, best: null, worst: null, realized: 0.6 };
+  const wallet = { v: 1, sol: 6.5, pos: {}, hist: [], stats, ach, born: now - 3600e3 };
+  return { now, hello, wallet, hist, entry, good, lead };
+}
+
 const CSS = `body>:not(.st-hero),.st-hero>:not(.bp-layer),.st-world,.st-shade,.hud,.st-top,.st-pitch,.st-keys,.st-paper,.st-main,.st-foot,.st-boot,.bn-layer{visibility:hidden!important}
 html,body,.st-hero{background:transparent!important}
 .bp-layer[data-skin='blocky'] .bp-call h2,.bp-layer[data-skin='blocky'] .bp-call-lt,.bp-layer[data-skin='blocky'] .bp-call-btns span{color:#fff!important}.bp-layer[data-skin='blocky'] .bp-call p{color:#ffc9c9!important}
@@ -102,7 +146,7 @@ for (const story of STORY_LIST) {
   await page.route('**/download/**', (r) => r.fulfill({ status: 200, body: '' }));
   // the 3D world isn't needed for plates (and would just burn GPU)
   await page.route('**/src/scene/world.js*', (r) => r.fulfill({ contentType: 'application/javascript', body: 'export function createWorld(){ throw new Error("plates: no world"); }' }));
-  await page.goto(SITE + '?debug&still' + (story === 'blocky' ? '&world=blocky' : ''), { waitUntil: 'domcontentloaded' });
+  await page.goto(SITE + '?debug&still' + (story === 'blocky' ? '&world=blocky' : story === 'any' ? '&world=city' : ''), { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => window.phone && window.net && window.net.lists.new.length > 3, null, { timeout: 15000 });
   await page.evaluate(() => document.fonts.ready);
   // the bag's real curve for its sparkline
@@ -110,7 +154,7 @@ for (const story of STORY_LIST) {
   await page.waitForTimeout(1500);
 
   // one clip for every plate of a story (the union over every skin it uses), so all phones sit in the same place
-  const SKINS = story === 'games' ? ['blocky', 'toon', 'tactical', 'obby', 'survival', 'city'] : [story === 'blocky' ? 'blocky' : 'city'];
+  const SKINS = story === 'games' ? ['blocky', 'toon', 'tactical', 'obby', 'survival', 'city'] : story === 'any' ? ['city', 'blocky', 'toon', 'tactical', 'obby', 'survival'] : [story === 'blocky' ? 'blocky' : 'city'];
   let box = null;
   for (const sk of SKINS) {
     await page.evaluate((sk) => window.phone.setSkin(sk), sk);
@@ -211,6 +255,8 @@ for (const story of STORY_LIST) {
     await snapPlate('sold');
   } else if (story === 'games') {
     await gamesPlates({ page, S, snapPlate, send, tickCoin, point, clip, taps });
+  } else if (story === 'any') {
+    await anyPlates({ page, S, snapPlate, tickCoin, point, clip, taps });
   } else {
     await page.evaluate(() => window.phone.open('pump'));
     await page.waitForTimeout(1300);
@@ -304,4 +350,124 @@ async function gamesPlates({ page, S, snapPlate, send, tickCoin, point, clip, ta
   await page.evaluate(() => { const b = document.querySelector('.bp-bagcard .bp-btn1'); b.style.transform = ''; b.click(); });
   await page.waitForTimeout(1200);
   await snapPlate('toon-sold');
+}
+
+// ---------- any: v2.5, type any amount (the real keypad, typed for real) ----------
+async function anyPlates({ page, S, snapPlate, tickCoin, point, clip, taps }) {
+  const skin = (s) => page.evaluate((s) => window.phone.setSkin(s), s);
+  const open = (v) => page.evaluate((v) => window.phone.open(v), v);
+  const tapEl = async (sel) => { await page.evaluate((sel) => { scrollTo(0, 0); document.querySelector(sel).click(); }, sel); await page.waitForTimeout(150); };
+  const press = (sel, on) => page.evaluate(({ sel, on }) => { const e = document.querySelector(sel); if (e) e.style.transform = on ? 'scale(.94)' : ''; }, { sel, on });
+  // the sheet's slide is set by hand so in-between frames can be captured (k: 0 = up, 1 = down)
+  await page.addStyleTag({ content: '.bp-sheet,.bp-sheet-card{transition:none!important}' });
+  const sheetAt = (k) => page.evaluate((k) => { const s = document.querySelector('.bp-amt-sheet'), c = s?.querySelector('.bp-sheet-card'); if (!c) return; s.style.background = `rgba(0,0,0,${(0.55 * (1 - k)).toFixed(3)})`; c.style.transform = `translateY(${(k * 110).toFixed(1)}%)`; }, k);
+  const sheetFree = () => page.evaluate(() => { const s = document.querySelector('.bp-amt-sheet'), c = s?.querySelector('.bp-sheet-card'); if (s) s.style.background = ''; if (c) c.style.transform = ''; });
+  const key = async (k, name) => { taps[name] = await point(`.bp-amt-pad button[data-k="${k}"]`); await tapEl(`.bp-amt-pad button[data-k="${k}"]`); };
+  const sheet = async (prefix) => {
+    await page.waitForSelector('.bp-amt-sheet');
+    await sheetAt(0.72); await snapPlate(prefix + 'up1');
+    await sheetAt(0.3); await snapPlate(prefix + 'up2');
+    await sheetFree(); await page.waitForTimeout(120);
+  };
+  const freezeBurst = async (prefix, name) => {
+    taps[name] = await page.evaluate(async ({ clip }) => {
+      const rows = [...document.querySelectorAll('.bp-pump .bp-row')].filter((r) => !r.classList.contains('bp-out'));
+      rows.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+      const b = rows[0].querySelector('.bp-buy'), r = b.getBoundingClientRect();
+      b.click();
+      await new Promise((ok) => setTimeout(ok, 0)); // the paper fill resolves, the coin burst starts
+      document.getAnimations().forEach((a) => a.pause());
+      return [r.left + r.width / 2 - clip.x, r.top + r.height / 2 - clip.y];
+    }, { clip });
+    for (const [ms, n] of [[90, 'buy1'], [230, 'buy2'], [420, 'buy3']]) {
+      await page.evaluate((ms) => document.getAnimations().forEach((a) => { try { a.currentTime = ms; } catch {} }), ms);
+      await snapPlate(prefix + n);
+    }
+    await page.evaluate(() => document.getAnimations().forEach((a) => { try { a.finish(); } catch {} }));
+  };
+
+  // act 1 (city glass phone): the New list with the bursts folded, the size keypad, 0.69, one tap
+  await skin('city'); await open('pump');
+  await page.waitForTimeout(1500);
+  await snapPlate('list');
+  taps.burst = await page.evaluate(({ clip }) => { const s = document.querySelector('.bp-pump .bp-row-nm small[data-n]'); if (!s) return null; const r = s.getBoundingClientRect(); return [r.left + 14 - clip.x, r.top + r.height / 2 - clip.y]; }, { clip });
+  taps.burstN = await page.evaluate(() => +document.querySelector('.bp-pump .bp-row-nm small[data-n]')?.dataset.n || null);
+  taps.size = await point('.bp-pump .bp-size');
+  await press('.bp-pump .bp-size', true); await snapPlate('size-press'); await press('.bp-pump .bp-size', false);
+  await tapEl('.bp-pump .bp-size');
+  await sheet('kp-');
+  await snapPlate('kp-sel'); // 0.5 prefilled, selected
+  taps.kpc = await point('.bp-amt-pad');
+  await key('0', 'k0'); await snapPlate('kp-0');
+  await key('.', 'kd'); await snapPlate('kp-0d');
+  await key('6', 'k6'); await snapPlate('kp-06');
+  await key('9', 'k9'); await snapPlate('kp-069');
+  taps.go = await point('.bp-amt-go');
+  await press('.bp-amt-go', true); await snapPlate('kp-go'); await press('.bp-amt-go', false);
+  await sheetAt(0.55); await snapPlate('kp-dn1'); await sheetFree();
+  await tapEl('.bp-amt-go');
+  await page.waitForTimeout(500);
+  await snapPlate('list-069');
+  await freezeBurst('', 'buy');
+  // the trade's own "bought" note: read it as the phone wrote it, then hold it up long enough for the plate
+  const note = await page.waitForFunction(() => {
+    const b = document.querySelector('.bp-isl-full b')?.textContent || '';
+    return /^bought/.test(b) ? { title: b, body: document.querySelector('.bp-isl-full small').textContent } : null;
+  }, null, { timeout: 8000 }).then((h) => h.jsonValue());
+  await page.waitForFunction(() => !document.querySelector('.bp-island').classList.contains('bp-isl-open'), null, { timeout: 8000 });
+  await page.evaluate(({ note, mint }) => window.phone.notify({ ...note, coin: window.net.coin(mint), tone: 'up', quiet: true, buzz: false, ms: 4000 }), { note, mint: S.lead.mint });
+  await page.waitForTimeout(600);
+  await snapPlate('bought');
+  // the burst it bought runs: the phone's own +25% rule opens "$Yoyo is running"
+  await page.waitForFunction(() => !document.querySelector('.bp-island').classList.contains('bp-isl-open'), null, { timeout: 8000 });
+  tickCoin(S.lead.mint, S.lead.p * 1.48);
+  const ran = await page.waitForFunction(() => /is running/.test(document.querySelector('.bp-isl-full b')?.textContent || '') && document.querySelector('.bp-island').classList.contains('bp-isl-open'), null, { timeout: 5000 }).then(() => true).catch(() => false);
+  if (!ran) {
+    // the staged tick didn't trip the phone's own rule: post the note that rule writes, from the wallet's real numbers
+    const why = await page.evaluate(() => window.wallet.bags().map((b) => ({ sym: b.p.sym, x: +b.x.toFixed(3), value: +b.value.toFixed(3), p: b.c?.p })));
+    console.log('running rule did not fire, bags:', JSON.stringify(why));
+    await page.evaluate(({ mint }) => {
+      const b = window.wallet.bags().find((x) => x.p.mint === mint);
+      const pct = Math.round((b.x - 1) * 100);
+      window.phone.notify({ title: '$' + b.p.sym + ' is running', body: 'your bag is ' + b.value.toFixed(2) + ' SOL', side: (pct >= 0 ? '+' : '') + pct + '%', tone: 'up', coin: b.c, buzz: false });
+    }, { mint: S.lead.mint });
+    await page.waitForFunction(() => /is running/.test(document.querySelector('.bp-isl-full b')?.textContent || '') && document.querySelector('.bp-island').classList.contains('bp-isl-open'), null, { timeout: 5000 });
+  }
+  await page.waitForTimeout(450);
+  await snapPlate('running');
+  taps.runPct = await page.evaluate(() => document.querySelector('.bp-isl-side')?.textContent || null);
+
+  // act 2 (pixel phone): the ConConAI bag up 4.12x, any % → 50, sell
+  await page.evaluate(({ mint, entry, sym, name, high }) => {
+    const w = window.wallet;
+    w.state.pos[mint] = { mint, sym, name, tokens: 1 / entry[1], cost: 1, opened: entry[0], entryP: entry[1], entryMc: entry[1] * 1e9 * 111.5, high, low: entry[1], dip: 0 };
+    w.save();
+  }, { mint: GOOD, entry: S.entry, sym: S.good.symbol, name: S.good.name, high: S.entry[1] * 4.12 });
+  await skin('blocky'); await open('pump');
+  tickCoin(GOOD, S.entry[1] * 4.12);
+  await page.waitForTimeout(2400); // the "is running" note for the bag comes and goes
+  await page.waitForFunction(() => !document.querySelector('.bp-island').classList.contains('bp-isl-open'), null, { timeout: 8000 });
+  await page.waitForTimeout(500); // the pixel toast finishes fading out
+  await snapPlate('b-win');
+  const anySel = '.bp-bagcard .bp-bc-act button:nth-child(2)';
+  taps.any = await point(anySel);
+  await press(anySel, true); await snapPlate('b-any-press'); await press(anySel, false);
+  await tapEl(anySel);
+  await sheet('b-kp-');
+  await snapPlate('b-kp');
+  await key('5', 'b5'); await snapPlate('b-kp-5');
+  await key('0', 'b0'); await snapPlate('b-kp-50');
+  taps.go2 = await point('.bp-amt-go');
+  await press('.bp-amt-go', true); await snapPlate('b-go'); await press('.bp-amt-go', false);
+  await sheetAt(0.55); await snapPlate('b-kp-dn1'); await sheetFree();
+  await tapEl('.bp-amt-go');
+  await page.waitForTimeout(1200);
+  await snapPlate('b-sold');
+  // the sell's real numbers, for the MISSION PASSED card
+  taps.sold = await page.evaluate(() => { const s = window.wallet.state.hist[0]; return s ? { got: s.got, cost: s.cost, x: s.x, sym: s.sym, part: s.part } : null; });
+
+  // the montage: four more phones, one beat each
+  for (const [s, v] of [['toon', 'pump'], ['tactical', 'lock'], ['obby', 'pump'], ['survival', 'lock']]) {
+    await skin(s); await open(v); await page.waitForTimeout(900); await snapPlate(s + '-' + v);
+  }
 }

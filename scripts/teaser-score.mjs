@@ -443,8 +443,103 @@ function games() {
   return master([[music, 0.82], [fx, 0.8], [sfx, 0.9], [drone, 1]], n, envDb, -1.5);
 }
 
+// ================= ANY (club, 128) =================
+// "type any amount": four on the floor, an offbeat sub, chord stabs; the keypad section pulls back so every digit is
+// a pluck on the 8ths; the buy is the drop; the pixel act adds square arps; the montage hits every cut.
+function any() {
+  const C = STORIES.any.cues, b = (x) => sec('any', x), n = Math.round((dur('any') + 0.05) * SR);
+  const r = rng(128);
+  const drums = new Bus(n), bass = new Bus(n), chords = new Bus(n), chip = new Bus(n), fx = new Bus(n), sfx = new Bus(n), pad = new Bus(n);
+  const prog = [['A3', 'C4', 'E4', 'G4'], ['F3', 'A3', 'C4', 'E4'], ['C4', 'E4', 'G4', 'B4'], ['G3', 'B3', 'D4', 'A4']]; // Am7 Fmaj7 Cmaj7 Gadd9
+  const roots = ['A1', 'F1', 'C2', 'G1'];
+  const bar = (beat) => Math.floor(beat / 4) % 4;
+  const groove = (from, to, g = 1, sparse = false) => {
+    for (let q = Math.ceil(from * 4); q < to * 4; q++) {
+      const beat = q / 4, t = b(beat), st = q % 16, k = q % 4;
+      if (k === 0) kick(drums, t, 1.0 * g, 130, 44);
+      if (!sparse && (st === 4 || st === 12)) { clap(drums, t, 0.9 * g, r); snare(drums, t, 0.32 * g, r); }
+      if (k === 2) hat(drums, t, (sparse ? 0.4 : 0.6) * g, r, true);
+      else if (!sparse) hat(drums, t, (k === 0 ? 0.22 : 0.34) * g, r);
+    }
+  };
+  const bassline = (from, to, g = 1) => { for (let beat = Math.ceil(from); beat < to; beat++) sub(bass, b(beat + 0.5), b(0.4) - b(0), NOTE(roots[bar(beat)]) + 12, g); };
+  const stabs = (from, to, g = 1) => {
+    for (let beat = Math.ceil(from / 4) * 4; beat < to; beat += 4) for (const o of [0, 1.5, 2.5]) {
+      if (beat + o < from || beat + o >= to) continue;
+      sawStack(chords, b(beat + o), b(0.3) - b(0), prog[bar(beat)].map(NOTE), (o === 0 ? 1 : 0.7) * g, 3800, 0, 11);
+    }
+  };
+  const arps = (from, to, g = 1) => {
+    for (let q = Math.ceil(from * 4); q < to * 4; q++) {
+      const beat = q / 4, ch = prog[bar(beat)], k = q % 8;
+      pulse(chip, b(beat), b(0.2) - b(0), NOTE(ch[[0, 1, 2, 3, 2, 1, 2, 3][k]]) + 12, 0.75 * g, 0.25, k % 2 ? 0.35 : -0.35);
+    }
+  };
+  const pluck = (t, note, g = 1, square = false) => {
+    if (square) pulse(sfx, t, 0.11, NOTE(note), 1.05 * g, 0.5);
+    else { tri(sfx, t, 0.12, NOTE(note), 1.1 * g); pulse(sfx, t, 0.05, NOTE(note) + 12, 0.45 * g, 0.5); }
+    tap(sfx, t, 0.55 * g, r);
+  };
+  const sparkle = (t, g = 1) => [2637, 3136, 3951, 4699].forEach((f, i) => { const i0 = Math.round((t + i * 0.035) * SR); let ph = 0; for (let k = 0; k < 0.25 * SR; k++) { ph += TAU * f / SR; add(sfx, i0 + k, Math.sin(ph) * Math.exp(-k / SR * 16) * 0.12 * g, (i - 1.5) * 0.3); } });
+  const roll = (from, to, g = 1) => { const N = Math.round((to - from) * 4); for (let k = 0; k < N; k++) snare(drums, b(from + k / 4), (0.15 + (k / N) * 0.55) * g, r); };
+
+  // ---- act 1 (city): a hit on frame 0, the groove under the copycats ----
+  kick(drums, 0.0, 1.15, 140, 42); crash(drums, 0.0, 0.8, r);
+  sawStack(chords, 0.0, 0.6, prog[0].map(NOTE), 1.15, 4200, 0, 5);
+  groove(0.5, C.sizetap); bassline(1, C.sizetap); stabs(1, C.sizetap, 0.85);
+  // the keypad: kick + open hats only, a low pad, every digit a pluck on the 8ths
+  tap(sfx, b(C.sizetap), 1.1, r); whoosh(sfx, b(C.sizetap) + 0.02, 0.22, 0.18, r, true);
+  groove(C.sizetap, C.go + 0.5, 0.8, true);
+  sawStack(pad, b(C.sizetap), b(C.buy) - b(C.sizetap), ['A2', 'E3', 'C4', 'G4'].map(NOTE), 0.7, 1400, 0, 0.6);
+  C.keys.forEach((kb, i) => pluck(b(kb), ['A5', 'C6', 'E6', 'A6'][i]));
+  tap(sfx, b(C.go), 1.1, r); pulse(sfx, b(C.go) + 0.01, 0.06, NOTE('E6'), 0.8, 0.5); pulse(sfx, b(C.go) + 0.07, 0.1, NOTE('A6'), 0.8, 0.5);
+  noiseSweep(fx, b(C.go), b(C.buy) - b(C.go), 600, 9000, 0.3, r, 1.4);
+  roll(C.go + 0.5, C.buy, 0.9);
+  // ---- the buy is the drop ----
+  tap(sfx, b(C.buy), 1.2, r); sparkle(b(C.buy) + 0.02, 1.1);
+  crash(drums, b(C.buy), 0.95, r); sawStack(chords, b(C.buy), 0.5, prog[0].map(NOTE), 1.2, 5200, 0, 5);
+  groove(C.buy, C.cut2 - 0.25); bassline(C.buy, C.cut2); stabs(C.buy + 0.5, C.cut2);
+  buzz(sfx, b(C.run), 0.75); ['A6', 'C7', 'E7'].forEach((nt, i) => pulse(sfx, b(C.run) + 0.05 + i * 0.06, 0.08, NOTE(nt), 0.7, 0.5));
+  whoosh(fx, b(C.cut2) - 0.4, 0.4, 0.4, r, true);
+  // ---- act 2 (pixel phone): square arps join; any %, 5 0, sell, MISSION PASSED ----
+  crash(drums, b(C.cut2), 0.85, r); kick(drums, b(C.cut2), 1.1, 140, 42);
+  groove(C.cut2, C.anytap + 0.75); bassline(C.cut2, C.anytap + 0.75); arps(C.cut2, C.go2 + 0.5, 0.9);
+  tap(sfx, b(C.anytap), 1.1, r); whoosh(sfx, b(C.anytap) + 0.02, 0.22, 0.18, r, true);
+  groove(C.anytap + 0.75, C.go2 + 0.5, 0.8, true);
+  C.keys2.forEach((kb, i) => pluck(b(kb), ['E6', 'A6'][i], 1, true));
+  tap(sfx, b(C.go2), 1.1, r); pulse(sfx, b(C.go2), 0.07, NOTE('A5'), 0.9, 0.5); pulse(sfx, b(C.go2) + 0.08, 0.1, NOTE('E6'), 0.9, 0.5);
+  noiseSweep(fx, b(C.go2), b(C.passed) - b(C.go2), 700, 9000, 0.3, r, 1.4);
+  roll(C.go2 + 0.5, C.passed, 1);
+  cashRegister(sfx, b(C.passed), 1.4, r);
+  ['A4', 'C#5', 'E5', 'A5'].forEach((nt) => pulse(sfx, b(C.passed), b(1.5) - b(0), NOTE(nt), 0.55, 0.25)); // the pixel win chord
+  pulse(sfx, b(C.passed), 0.08, NOTE('B5'), 1, 0.5); pulse(sfx, b(C.passed) + 0.08, 0.5, NOTE('E6'), 1, 0.5);
+  crash(drums, b(C.passed), 0.9, r);
+  sawStack(chords, b(C.passed), 0.8, ['A3', 'C#4', 'E4', 'A4'].map(NOTE), 1.05, 6000, 0, 3.5);
+  groove(C.passed, C.endcard); bassline(C.passed, C.endcard); arps(C.passed, C.cut3, 1); stabs(C.passed + 0.5, C.endcard, 0.9);
+  // ---- the montage: a stab, a crash and a whoosh on every cut ----
+  for (let cut = C.cut3; cut < C.endcard; cut++) {
+    whoosh(sfx, b(cut) - 0.15, 0.16, 0.26, r, true);
+    crash(drums, b(cut), cut === C.cut3 ? 0.8 : 0.4, r);
+    sawStack(chords, b(cut), 0.32, prog[bar(cut)].map((m) => NOTE(m) + (cut % 2 ? 0 : 12)), 1, 4800, 0, 9);
+  }
+  roll(C.endcard - 1, C.endcard, 0.8);
+  // ---- the end card: one big hit, a pad under the words, the button press ----
+  kick(drums, b(C.endcard), 1.2, 140, 40); boom(sfx, b(C.endcard), 0.75, r); crash(drums, b(C.endcard), 0.95, r);
+  sawStack(chords, b(C.endcard), 1.4, ['A3', 'C4', 'E4', 'G4', 'B4', 'E5'].map(NOTE), 1.2, 3600, 0, 2.2);
+  sawStack(pad, b(C.endcard) + 0.05, dur('any') - b(C.endcard), ['A2', 'E3', 'C4', 'G4'].map(NOTE), 0.85, 1700, 0, 0.42);
+  whoosh(sfx, b(C.endcard) - 0.18, 0.4, 0.22, r, false);
+  const press = b(C.endcard) + 1.45; tap(sfx, press, 1.2, r); sparkle(press + 0.02, 0.8);
+  // rooms, glue
+  reverb(chords, 0.26, 0.84); reverb(chip, 0.18, 0.8); delay(chip, b(0.75) - b(0), 0.3, 0.22); reverb(pad, 0.4, 0.88); reverb(sfx, 0.14, 0.78); reverb(drums, 0.06, 0.7);
+  // the intro opens up from a low-pass
+  const open = (t) => (t < b(1) ? 700 + 15300 * Math.pow(t / b(1), 2) : 16000);
+  sweepFilter(chords.L, 'lp', open); sweepFilter(chords.R, 'lp', open);
+  const envDb = (t) => (t < b(C.sizetap) ? 0 : t < b(C.buy) ? -1.5 : t < b(C.endcard) ? 0.5 : -0.5 - 2.5 * ((t - b(C.endcard)) / (dur('any') - b(C.endcard))));
+  return master([[drums, 0.95], [bass, 0.9], [chords, 0.75], [chip, 0.7], [pad, 0.8], [fx, 0.75], [sfx, 0.95]], n, envDb, -1.5);
+}
+
 export function renderScore(story, path) {
-  const [L, R] = story === 'blocky' ? blocky() : story === 'games' ? games() : city();
+  const [L, R] = story === 'blocky' ? blocky() : story === 'games' ? games() : story === 'any' ? any() : city();
   writeWav(path, L, R);
   return path;
 }

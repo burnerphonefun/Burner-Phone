@@ -73,6 +73,42 @@ STORIES.games = {
   },
 };
 
+// v2.5: "type any amount". Club at 128, 15 s. Copycats fold, the keypad (typed on the 8ths), a buy; the pixel phone
+// sells any % into MISSION PASSED; four hard cuts through the other worlds; the download card.
+STORIES.any = {
+  bpm: 128, beats: 32, fps: 60, world: 'city',
+  shots: [
+    { from: 0, to: 12, world: 'city', wt0: 6.2, skin: 'city', raiseAt: 0 },
+    { from: 12, to: 21, world: 'blocky', wt0: 11.5, skin: 'blocky' },
+    { from: 21, to: 22, world: 'toon', wt0: 39.3, skin: 'toon', plate: 'pump' },
+    { from: 22, to: 23, world: 'tactical', wt0: 5.5, skin: 'tactical', plate: 'lock' },
+    { from: 23, to: 24, world: 'obby', wt0: 5.6, skin: 'obby', plate: 'pump' },
+    { from: 24, to: 25, world: 'survival', wt0: 39.4, skin: 'survival', plate: 'lock' },
+    { from: 25, to: 32, world: 'city', wt0: 22, skin: 'city', stayUp: true },
+  ],
+  cues: {
+    raise: 1,              // the phone lands: the New list, copycat bursts folded into one row each
+    cap1: 2,               // COPYCATS? / ONE ROW. (second line half a beat later)
+    rings: [2.5, 3],       // the ×13 lights up
+    sizetap: 4,            // thumb taps the buy size: the keypad slides up, the phone comes closer
+    keys: [5, 5.5, 6, 6.5], // 0 . 6 9
+    cap2: 5,               // TYPE ANY / AMOUNT.
+    go: 7,                 // "use 0.69 SOL"
+    buy: 8,                // one tap: bought 0.69
+    run: 9.5,              // "$Yoyo is running"
+    focusOut: 7.35,        // the phone settles back before the buy (the island notes live at its top)
+    cut2: 12,              // the pixel phone, the bag up 4x
+    cap3: 13,              // SELL / ANY %
+    anytap: 13,
+    keys2: [14, 14.5],     // 5 0
+    go2: 15,               // SELL 50%
+    passed: 16,            // MISSION PASSED (pixel)
+    cut3: 21,              // toon, tactical, obby, survival, one beat each
+    cap4: 21,              // ONE PHONE. / EVERY GAME.
+    endcard: 25,           // BURNERPHONE + download for windows
+  },
+};
+
 export const spb = (s) => 60 / STORIES[s].bpm;
 export const sec = (s, beats) => beats * spb(s);
 export const dur = (s) => sec(s, STORIES[s].beats);

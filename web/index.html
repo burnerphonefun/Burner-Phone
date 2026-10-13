@@ -8,10 +8,14 @@
   <meta name="theme-color" content="#0B0A09">
   <meta property="og:title" content="BurnerPhone">
   <meta property="og:description" content="a burner phone for your bags. trade pump.fun without leaving the game.">
-  <meta property="og:image" content="/og.png">
+  <meta property="og:image" content="https://burner-production-5f82.up.railway.app/og.png">
+  <meta property="og:url" content="https://burner-production-5f82.up.railway.app/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@burnerphonefun">
+  <meta name="twitter:image" content="https://burner-production-5f82.up.railway.app/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="preload" href="/api/snapshot" as="fetch" crossorigin="anonymous">
   <link rel="preload" href="/poster-blocky.jpg" as="image" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +25,8 @@
 <body data-world="blocky">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <symbol id="i-gh" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></symbol>
+    <symbol id="i-mark" viewBox="44 44 312 312"><rect x="113" y="125" width="10" height="25" rx="3" fill="#B83A0E"/><rect x="113" y="162" width="10" height="25" rx="3" fill="#B83A0E"/><rect x="277" y="137" width="10" height="36" rx="3" fill="#B83A0E"/><rect x="127" y="66" width="146" height="268" rx="26" fill="none" stroke="#FF5A1F" stroke-width="16"/><rect x="182" y="88" width="36" height="10" rx="5" fill="#1B1715"/><polyline points="158,234 186,206 202,222 242,168" fill="none" stroke="#FF5A1F" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><polyline points="216,167 243,166 243,193" fill="none" stroke="#FF5A1F" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></symbol>
     <symbol id="i-win" viewBox="0 0 16 16"><path fill="currentColor" d="M0 2.27 6.54 1.38v6.3H0zM7.32 1.27 16 0v7.68H7.32zM0 8.32h6.54v6.3L0 13.73zM7.32 8.32H16V16l-8.68-1.27z"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 2.5 4 5.6v6.1c0 4.7 3.4 8.6 8 9.8 4.6-1.2 8-5.1 8-9.8V5.6z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m8.5 12 2.4 2.4 4.6-4.8"/></symbol>
     <symbol id="i-code" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m8 7-5 5 5 5M16 7l5 5-5 5M13.5 4.5l-3 15"/></symbol>
@@ -71,10 +77,11 @@
     </div>
 
     <header class="st-top">
-      <a class="st-logo" href="#top">BURNER<span>PHONE</span></a>
+      <a class="st-logo" href="#top"><svg class="st-logo-mark" aria-hidden="true"><use href="#i-mark"/></svg>BURNER<span>PHONE</span></a>
       <span class="st-mob-pitch">a phone for your bags in any game. this one is live, paper SOL ↓</span>
       <nav>
         <a href="#games">games</a><a href="#real">real trading</a>
+        <a class="st-nav-icon" href="https://x.com/burnerphonefun" target="_blank" rel="noopener" aria-label="BurnerPhone on X" title="@burnerphonefun on X"><svg aria-hidden="true"><use href="#i-x"/></svg></a>
         <a class="st-nav-icon" href="https://github.com/burnerphonefun/Burner-Phone" target="_blank" rel="noopener" aria-label="BurnerPhone source code on GitHub" title="source code on GitHub"><svg aria-hidden="true"><use href="#i-gh"/></svg></a>
       </nav>
     </header>
@@ -86,6 +93,7 @@
       <div class="st-cta">
         <a class="st-btn st-btn-main st-btn-dl" href="https://github.com/burnerphonefun/Burner-Phone/releases/latest" data-dl><svg aria-hidden="true"><use href="#i-win"/></svg>download for windows</a>
         <a class="st-btn st-btn-icon" href="https://github.com/burnerphonefun/Burner-Phone" target="_blank" rel="noopener" aria-label="source code on GitHub" title="source code on GitHub"><svg aria-hidden="true"><use href="#i-gh"/></svg></a>
+        <a class="st-btn st-btn-icon" href="https://x.com/burnerphonefun" target="_blank" rel="noopener" aria-label="BurnerPhone on X" title="@burnerphonefun on X"><svg aria-hidden="true"><use href="#i-x"/></svg></a>
       </div>
       <small class="st-cta-sub" data-dl-sub>free · windows 10 / 11 · open source</small>
     </div>
@@ -157,6 +165,7 @@
           <a href="https://github.com/burnerphonefun/Burner-Phone/releases/latest" data-zip>portable zip</a>
           <a href="https://github.com/burnerphonefun/Burner-Phone/releases/latest" target="_blank" rel="noopener">all files + checksums</a>
           <a href="https://github.com/burnerphonefun/Burner-Phone" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-gh"/></svg>source code</a>
+          <a href="https://x.com/burnerphonefun" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-x"/></svg>@burnerphonefun</a>
         </div>
       </div>
       <ol class="st-steps">
@@ -183,8 +192,12 @@
   </main>
 
   <footer class="st-foot">
-    <span class="st-logo">BURNER<span>PHONE</span></span>
+    <span class="st-logo"><svg class="st-logo-mark" aria-hidden="true"><use href="#i-mark"/></svg>BURNER<span>PHONE</span></span>
     <span>live data from pump.fun, pumpportal, jupiter, geckoterminal and dex screener. the website is paper trading only. not affiliated with any game.</span>
+    <span class="st-foot-links">
+      <a href="https://x.com/burnerphonefun" target="_blank" rel="noopener" aria-label="BurnerPhone on X"><svg aria-hidden="true"><use href="#i-x"/></svg>@burnerphonefun</a>
+      <a href="https://github.com/burnerphonefun/Burner-Phone" target="_blank" rel="noopener" aria-label="BurnerPhone on GitHub"><svg aria-hidden="true"><use href="#i-gh"/></svg>github</a>
+    </span>
   </footer>
 
   <script type="module" src="/src/main.js"></script>

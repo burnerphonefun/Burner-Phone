@@ -8,6 +8,7 @@ import { chromium } from 'playwright-core';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, mkdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { markSvg } from './brand-mark.mjs';
 
 const APP = resolve(import.meta.dirname, '..');
 const PUB = join(APP, 'web', 'public');
@@ -15,7 +16,9 @@ const OUT = join(APP, 'docs');
 mkdirSync(OUT, { recursive: true });
 
 const img = (f) => 'data:image/' + (f.endsWith('.png') ? 'png' : 'jpeg') + ';base64,' + readFileSync(join(PUB, f)).toString('base64');
-const mark = readFileSync(join(PUB, 'favicon.svg'), 'utf8');
+const mark = markSvg({ crop: 0.78 }); // the X profile picture's mark (scripts/brand-mark.mjs)
+// the fan's phones: the teaser plates (a frozen, curated snapshot: no live names), made by teaser-plates.mjs --stories=any
+const plate = (n) => 'data:image/png;base64,' + readFileSync(join(APP, 'web', 'src', 'teaser', 'plates', n + '.png')).toString('base64');
 const WORLDS = [
   ['blocky', 'blocky night', 'block survival games'],
   ['toon', 'toon island', 'battle royale'],
@@ -55,9 +58,9 @@ const page = (body) => `<!doctype html><html><head><meta charset="utf-8">${fonts
 
 // three phones fanned out of the bottom edge, the way the phone comes up in a hand
 const fan = (x, y, s) => `
-  <img class="ph" src="${img('skins/toon.png')}" style="left:${x - 190 * s}px; top:${y + 40 * s}px; width:${300 * s}px; transform: rotate(-9deg)">
-  <img class="ph" src="${img('skins/tactical.png')}" style="left:${x + 190 * s}px; top:${y + 40 * s}px; width:${300 * s}px; transform: rotate(9deg)">
-  <img class="ph" src="${img('skins/city.png')}" style="left:${x}px; top:${y}px; width:${330 * s}px">`;
+  <img class="ph" src="${plate('any-toon-pump')}" style="left:${x - 190 * s}px; top:${y + 40 * s}px; width:${300 * s}px; transform: rotate(-9deg)">
+  <img class="ph" src="${plate('any-tactical-lock')}" style="left:${x + 190 * s}px; top:${y + 40 * s}px; width:${300 * s}px; transform: rotate(9deg)">
+  <img class="ph" src="${plate('any-list')}" style="left:${x}px; top:${y}px; width:${330 * s}px">`;
 const pitch = `
   <div class="brand">${mark}<div class="word">BURNER<span>PHONE</span></div></div>
   <div class="tag">a burner phone for your bags.</div>

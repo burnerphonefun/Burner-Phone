@@ -8,6 +8,7 @@
   <a href="https://github.com/burnerphonefun/Burner-Phone/actions/workflows/ci.yml"><img alt="build" src="https://img.shields.io/github/actions/workflow/status/burnerphonefun/Burner-Phone/ci.yml?branch=main&style=flat-square&label=build&labelColor=0B0A09"></a>
   <img alt="windows 10 / 11" src="https://img.shields.io/badge/windows-10%20%2F%2011-FFF4E6?style=flat-square&labelColor=0B0A09">
   <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-2BE07A?style=flat-square&labelColor=0B0A09"></a>
+  <a href="https://x.com/burnerphonefun"><img alt="follow @burnerphonefun on X" src="https://img.shields.io/badge/follow-%40burnerphonefun-FF5A1F?style=flat-square&logo=x&logoColor=white&labelColor=0B0A09"></a>
 </p>
 
 <h3>
@@ -16,6 +17,8 @@
   <a href="https://burner-production-5f82.up.railway.app">Try it in the browser</a>
   &nbsp;·&nbsp;
   <a href="#how-it-works">How it works</a>
+  &nbsp;·&nbsp;
+  <a href="https://x.com/burnerphonefun">X / Twitter</a>
 </h3>
 
 <br>

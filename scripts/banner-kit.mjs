@@ -1,10 +1,11 @@
 // node scripts/banner-kit.mjs [--out=../launch/banner] [--guides] — 1500x500 banners for X and DEX Screener, from the real
-// phone plates (web/src/teaser/plates, made by teaser-plates.mjs), the world posters and logo #1 (launch/logo/phone.svg).
+// phone plates (web/src/teaser/plates, made by teaser-plates.mjs), the world posters and the X profile picture's mark (scripts/brand-mark.mjs).
 // Writes <out>/banner-<id>.png (1500x500), -2x.png (3000x1000), .jpg, and sheet.png; --guides also draws the crop zones.
 // X covers the bottom-left with the profile picture (~x 40-380, y 330-500 at 1500 wide): nothing important goes there.
 import { chromium } from 'playwright-core';
 import { mkdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { markSvg } from './brand-mark.mjs';
 
 const APP = resolve(import.meta.dirname, '..');
 const arg = (k, d) => (process.argv.find((a) => a.startsWith('--' + k + '=')) || '').split('=')[1] || d;
@@ -14,7 +15,8 @@ mkdirSync(OUT, { recursive: true });
 
 const data = (f) => { const p = resolve(APP, f); if (!existsSync(p)) throw new Error('missing ' + f); return `data:image/${p.endsWith('.png') ? 'png' : 'jpeg'};base64,${readFileSync(p).toString('base64')}`; };
 const PLATES = 'web/src/teaser/plates/';
-const MARK = readFileSync(resolve(APP, '../launch/logo/phone.svg'), 'utf8');
+const MARK = markSvg({ crop: 0.78 }); // the X profile picture's mark (scripts/brand-mark.mjs)
+const PFP = resolve(APP, '../launch/logo/x-pfp/x-pfp-400.jpg'); // the real picture, for the preview's avatar
 const C = { ink: '#0B0A09', paper: '#FFF4E6', burn: '#FF5A1F', gold: '#FFC23D', blood: '#E8233A', up: '#2BE07A' };
 const WORLDS = ['blocky', 'toon', 'tactical', 'obby', 'survival', 'city'];
 
@@ -68,7 +70,8 @@ const BANNERS = {
   </div>`,
 
   // C. clean: ink, a burn glow, the big wordmark, three phones fanned out
-  clean: `<div class="b" style="background:radial-gradient(circle at 80% 35%,rgba(255,90,31,.32),rgba(255,90,31,.08) 38%,rgba(255,90,31,0) 60%),${C.ink}">
+  clean: `<div class="b" style="background:radial-gradient(circle at 80% 35%,rgba(255,90,31,.3),rgba(255,90,31,.07) 38%,rgba(255,90,31,0) 60%),#000">
+    <svg class="abs" style="left:0;top:0" width="1500" height="500" viewBox="0 0 1500 500"><g fill="none" stroke="${C.burn}" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" opacity=".13"><polyline points="420,560 700,300 850,440 1230,40"/><polyline points="1060,46 1240,34 1236,214"/></g></svg>
     ${[['any-toon-pump', -150, 92, -10, 360], ['any-tactical-lock', 176, 92, 10, 360], ['any-list', 0, 40, 0, 384]].map(([pl, dx, y, r, w]) => `<img class="abs" src="${data(PLATES + pl + '.png')}" style="left:${1082 + dx}px;top:${y}px;width:${w}px;transform:rotate(${r}deg);filter:drop-shadow(0 26px 36px rgba(0,0,0,.6))">`).join('')}
     <div class="abs" style="left:70px;top:76px">${lockup(118, 104)}</div>
     <div class="abs tag" style="left:72px;top:214px;font-size:32px">a burner phone for your bags.</div>
@@ -97,7 +100,7 @@ const sp = await browser.newPage({ viewport: { width: 1560, height: 1700 } });
 await sp.setContent(`<!doctype html><html><body style="margin:0;padding:30px;background:#141110;font:600 22px system-ui;color:#fff4e6">
   ${shots.map((f, i) => `<div style="margin-bottom:26px"><div style="margin-bottom:8px">${'ABC'[i]} · ${Object.keys(BANNERS)[i]}</div><div style="position:relative;width:1500px;height:500px">
     <img src="data:image/png;base64,${readFileSync(f).toString('base64')}" style="display:block;width:1500px;height:500px;border-radius:12px">
-    <div style="position:absolute;left:44px;top:340px;width:300px;height:300px;border-radius:50%;background:#0B0A09;border:8px solid #141110;display:grid;place-items:center;overflow:hidden">${readFileSync(resolve(APP, '../launch/logo/coin.svg'), 'utf8').replace('<svg ', '<svg width="276" height="276" ')}</div></div></div>`).join('')}
+    <div style="position:absolute;left:44px;top:340px;width:300px;height:300px;border-radius:50%;background:#0B0A09;border:8px solid #141110;display:grid;place-items:center;overflow:hidden"><img src="data:image/jpeg;base64,${readFileSync(PFP).toString('base64')}" width="284" height="284" style="border-radius:50%"></div></div></div>`).join('')}
 </body></html>`);
 await sp.screenshot({ path: join(OUT, 'sheet.png'), fullPage: true });
 await browser.close();

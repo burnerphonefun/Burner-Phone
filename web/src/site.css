@@ -35,6 +35,9 @@ body[data-world='obby'] .st-shade, body[data-world='toon'] .st-shade { backgroun
 .st-top { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 22px 44px; z-index: 20; }
 .st-logo { font: 900 30px/1 'Big Shoulders Display', Impact, sans-serif; letter-spacing: 2px; text-decoration: none; color: var(--paper); text-shadow: 0 2px 0 rgba(0,0,0,.35); }
 .st-logo span { color: var(--burn); }
+/* the mark from the X profile picture, sized to the caps */
+.st-logo { display: inline-flex; align-items: center; }
+.st-logo-mark { width: 1.18em; height: 1.18em; margin: -.12em .22em -.12em -.12em; flex: none; filter: drop-shadow(0 2px 0 rgba(0,0,0,.35)); }
 .st-top nav { display: flex; gap: 26px; margin-right: 330px; padding: 8px 16px; border-radius: 12px; background: rgba(8,6,16,.45); }
 .st-top nav a { text-decoration: none; font-weight: 600; font-size: 14px; opacity: .88; transition: opacity .2s, color .2s; }
 .st-top nav a:hover { opacity: 1; color: var(--acc); }
@@ -275,7 +278,11 @@ body[data-world='city'] .hud-city, body[data-world='blocky'] .hud-blocky, body[d
 .st-faq li { padding: 18px 20px; border-radius: 16px; background: #16120f; border: 1px solid rgba(255,244,230,.08); font-size: 14.5px; line-height: 1.5; color: rgba(255,244,230,.8); }
 .st-faq b { display: block; color: var(--paper); margin-bottom: 4px; }
 .st-foot { max-width: 1180px; margin: 60px auto 0; padding: 26px 44px 40px; display: flex; gap: 24px; align-items: center; border-top: 1px solid rgba(255,244,230,.08); font-size: 13px; color: rgba(255,244,230,.55); }
-.st-foot .st-logo { font-size: 22px; }
+.st-foot .st-logo { font-size: 22px; flex: none; }
+.st-foot-links { display: flex; gap: 18px; margin-left: auto; flex: none; }
+.st-foot-links a { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; color: rgba(255,244,230,.8); text-decoration: none; }
+.st-foot-links a:hover { color: var(--burn); }
+.st-foot-links svg { width: 15px; height: 15px; }
 
 /* ---------- smaller desktops ---------- */
 @media (max-width: 1180px) { .st-pitch { width: min(520px, 42vw); } .st-top nav { margin-right: 0; } .st-pick { width: 86px; height: 62px; } .st-cards { grid-template-columns: repeat(2, 1fr); } }
@@ -307,4 +314,5 @@ body[data-world='city'] .hud-city, body[data-world='blocky'] .hud-blocky, body[d
   .st-dl { display: none; } .st-trust { grid-template-columns: 1fr 1fr; }
   .st-get-mobile { display: block; }
   .st-foot { flex-direction: column; align-items: flex-start; padding: 24px 16px 40px; gap: 10px; }
+  .st-foot-links { margin-left: 0; }
 }

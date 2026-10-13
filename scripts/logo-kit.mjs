@@ -4,6 +4,7 @@
 import { chromium } from 'playwright-core';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { markInner } from './brand-mark.mjs';
 
 const APP = resolve(import.meta.dirname, '..');
 const arg = (k, d) => (process.argv.find((a) => a.startsWith('--' + k + '=')) || '').split('=')[1] || d;
@@ -40,6 +41,8 @@ function flame(cx, by, s, cols = [C.burn, C.gold, C.paper], { sx = 1, outline = 
 
 // ---------- the five directions ----------
 const MARKS = {
+  // 0. in use: the X profile picture's mark (scripts/brand-mark.mjs), on its 400 grid scaled to 512
+  x: { name: 'x profile (in use)', svg: `<g transform="scale(1.28)">${markInner()}</g>` },
   // 1. the phone + flame, redrawn: a wider body, side keys, the island, a three-tone flame
   phone: {
     name: 'phone + flame',
@@ -182,7 +185,7 @@ for (const id of Object.keys(MARKS)) {
 const row = (id) => {
   const f = files[id], tiny = (s) => `<img src="data:image/svg+xml;base64,${Buffer.from(f.icon).toString('base64')}" width="${s}" height="${s}">`;
   return `<div class="row">
-    <div class="lab"><b>${['phone', 'burning', 'monogram', 'pixel', 'coin'].indexOf(id) + 1}</b>${MARKS[id].name}</div>
+    <div class="lab"><b>${['x', 'phone', 'burning', 'monogram', 'pixel', 'coin'].indexOf(id)}</b>${MARKS[id].name}</div>
     <div class="cell dark big">${f.mark}</div>
     <div class="cell light big">${f.mark}</div>
     <div class="cell dark sizes"><div class="tab">${tiny(16)}<span>BurnerPhone</span></div><div class="bar">${tiny(24)}</div>

@@ -2,12 +2,13 @@
 //   page: build the overlay page into desktop/app-dist (+ config.json with the API base)
 //   icon: render web/public/favicon.svg to desktop/build/icon.png (256) and tray.png (32) with the installed Chrome
 //   detector: cargo build the Rust game detector (desktop/detect) → desktop/bin/burner-detect.exe
-//   dist: page + icon + detector + electron-builder → desktop/dist/burner-windows.zip
+//   dist: page + icon + detector + electron-builder → desktop/dist/BurnerPhone-Setup.exe, burnerphone-windows.zip, SHA256SUMS.txt
 // BURNER_API=https://... bakes the live server into the app (default http://localhost:8787 for dev).
 import { spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync, renameSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
+import { createHash } from 'node:crypto';
 
 const APP = resolve(import.meta.dirname, '..');
 const DESK = join(APP, 'desktop');
@@ -88,7 +89,15 @@ else if (cmd === 'dist') {
   page();
   detector(false);
   rmSync(join(DESK, 'dist'), { recursive: true, force: true });
-  run('npx', ['electron-builder', '--win', 'zip', '--x64', '--publish', 'never'], DESK);
-  const zip = join(DESK, 'dist', 'burner-windows.zip');
-  if (existsSync(zip)) console.log('built ' + zip);
+  run('npx', ['electron-builder', '--win', '--x64', '--publish', 'never'], DESK); // → dist/BurnerPhone-Setup.exe + win-unpacked
+  // the portable zip: the same files in a BurnerPhone/ folder (Windows' own tar writes zips), then the checksums
+  const dist = join(DESK, 'dist'), stage = join(dist, 'stage');
+  mkdirSync(stage, { recursive: true });
+  renameSync(join(dist, 'win-unpacked'), join(stage, 'BurnerPhone'));
+  const tar = spawnSync(join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'tar.exe'), ['-a', '-c', '-f', join(dist, 'burnerphone-windows.zip'), '-C', stage, 'BurnerPhone'], { stdio: 'inherit' });
+  if (tar.status !== 0) { console.error('zipping failed'); process.exit(1); }
+  const files = ['BurnerPhone-Setup.exe', 'burnerphone-windows.zip'];
+  const sums = files.map((f) => createHash('sha256').update(readFileSync(join(dist, f))).digest('hex') + '  ' + f).join('\n') + '\n';
+  writeFileSync(join(dist, 'SHA256SUMS.txt'), sums);
+  console.log('built desktop/dist: ' + files.join(', ') + ', SHA256SUMS.txt\n' + sums);
 } else { console.error('usage: desktop-build.mjs page|icon|detector|dist'); process.exit(1); }

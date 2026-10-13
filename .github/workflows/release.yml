@@ -1,0 +1,77 @@
+name: release
+
+# Push a tag (v2.5) and GitHub builds the Windows app from that commit, signs a build provenance certificate for the
+# downloads and publishes the release. Nothing is built or uploaded from anyone's PC.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write     # create the release
+  id-token: write     # build provenance
+  attestations: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            desktop/package-lock.json
+
+      - name: the tag matches the app's version
+        shell: bash
+        run: |
+          v=$(node -p "require('./desktop/package.json').version")
+          t=${GITHUB_REF_NAME#v}
+          [ "$v" = "$t" ] || [ "$v" = "$t.0" ] || { echo "tag $GITHUB_REF_NAME but desktop/package.json says $v"; exit 1; }
+
+      - name: install
+        shell: bash
+        run: |
+          npm ci
+          (cd desktop && npm ci)
+
+      - name: tests first
+        run: |
+          node scripts/wallet-test.mjs
+          node scripts/wasted-test.mjs
+          node scripts/wallet-real-test.mjs --offline --no-electron
+
+      - name: build (overlay page, Rust game detector, installer, zip, checksums)
+        working-directory: desktop
+        env:
+          BURNER_API: https://burner-production-5f82.up.railway.app
+          BURNER_RELEASE: '1'
+        run: npm run dist
+
+      - name: the detector in the build works
+        run: node scripts/detect-test.mjs desktop/dist/stage/BurnerPhone/resources/app.asar.unpacked/bin/burner-detect.exe
+
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            desktop/dist/BurnerPhone-Setup.exe
+            desktop/dist/burnerphone-windows.zip
+
+      - name: publish
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes=docs/releases/$GITHUB_REF_NAME.md
+          [ -f "$notes" ] || notes=docs/releases/default.md
+          cat "$notes" docs/releases/safety.md > release-notes.md
+          echo "" >> release-notes.md
+          echo '```' >> release-notes.md
+          cat desktop/dist/SHA256SUMS.txt >> release-notes.md
+          echo '```' >> release-notes.md
+          gh release create "$GITHUB_REF_NAME" desktop/dist/BurnerPhone-Setup.exe desktop/dist/burnerphone-windows.zip desktop/dist/SHA256SUMS.txt \
+            --title "BurnerPhone $GITHUB_REF_NAME" --notes-file release-notes.md

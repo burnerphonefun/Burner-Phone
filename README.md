@@ -28,7 +28,7 @@
 
 <br>
 
-You're mid-game and a coin you hold starts moving. BurnerPhone puts a phone in your character's hand with live pump.fun on it: launches seconds after they happen, your bags ticking, one tap to buy or sell. Press **Alt+Q** again and the clicks go straight back to the game.
+You're mid-game and a coin you hold starts moving. BurnerPhone puts a phone in your character's hand with live pump.fun on it: launches seconds after they happen, your bags ticking, one tap to buy or sell (or type any amount on its keypad). Press **Alt+Q** again and the clicks go straight back to the game.
 
 <table>
 <tr>
@@ -73,14 +73,19 @@ The **camera** app shoots the game behind the phone and stamps your trade on it,
 
 ## Get it
 
-1. Download **`burnerphone-windows.zip`** from the [latest release](https://github.com/burnerphonefun/Burner-Phone/releases/latest).
-2. Unzip it anywhere and run **`BurnerPhone\BurnerPhone.exe`**. It sits in the tray.
-3. Press **Alt+Q** in any game.
+1. Download **`BurnerPhone-Setup.exe`** from the [latest release](https://github.com/burnerphonefun/Burner-Phone/releases/latest) and run it. It installs just for you (no admin), adds a Start menu shortcut and sits in the tray. No installer wanted? The portable `burnerphone-windows.zip` is right next to it.
+2. Press **Alt+Q** in any game.
 
 > [!TIP]
 > Run your game in **borderless windowed**. Exclusive fullscreen hides every overlay, this one included. Change the hotkey from the tray icon; with more than one monitor the phone comes up on the screen your mouse is on.
 
-The Windows build isn't code-signed yet, so SmartScreen asks once: **More info → Run anyway**. Or [build it yourself](#build-from-source) from this source.
+**Built by GitHub, checkable by anyone.** Every release is built by the [release workflow](.github/workflows/release.yml) on a GitHub runner from the tagged commit (nobody's PC is in the loop), and GitHub signs a build provenance certificate for the downloads:
+
+```bash
+gh attestation verify BurnerPhone-Setup.exe --repo burnerphonefun/Burner-Phone
+```
+
+The app isn't code-signed yet (a paid certificate), so SmartScreen says "unknown publisher" once: **More info → Run anyway**. Or [build it yourself](#build-from-source).
 
 ## Paper or real
 
@@ -185,7 +190,7 @@ npm start              # api + site on :8787 (PORT to change)
 
 cd desktop
 npm install
-BURNER_API=https://burner-production-5f82.up.railway.app npm run dist   # → desktop/dist/burnerphone-windows.zip (builds the detector too)
+BURNER_API=https://burner-production-5f82.up.railway.app npm run dist   # → desktop/dist: BurnerPhone-Setup.exe, the portable zip, SHA256SUMS.txt
 ```
 
 Tests:

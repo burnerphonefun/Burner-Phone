@@ -27,6 +27,16 @@ We'll reply as fast as we can, fix it, ship a release, and credit you in the rel
 
 The website never asks for a key or a wallet connection; it's paper only. Real trades go from the user's PC straight to Jupiter, PumpPortal and Solana RPCs, never through our server.
 
+## Checking a download
+
+Releases are built by GitHub Actions from the tagged commit ([release.yml](.github/workflows/release.yml)), not on anyone's PC, and GitHub signs a build provenance certificate for `BurnerPhone-Setup.exe` and the portable zip:
+
+```bash
+gh attestation verify BurnerPhone-Setup.exe --repo burnerphonefun/Burner-Phone
+```
+
+Each release also carries `SHA256SUMS.txt` (in PowerShell: `Get-FileHash .\BurnerPhone-Setup.exe`).
+
 ## Supported versions
 
 Only the [latest release](https://github.com/burnerphonefun/Burner-Phone/releases/latest) gets fixes.

@@ -9,7 +9,7 @@ import { money, tick, usd, age, sol as fmtSol } from '../../shared/phone/fmt.js'
 import { tween, ease, wait } from '../../shared/phone/motion.js';
 
 // the open-source repo (a new account for burner); the site reads the latest release from github's api
-const GITHUB = { repo: 'burnerphonefun/Burner-Phone', live: false }; // live: true once the repo has a release
+const GITHUB = { repo: 'burnerphonefun/Burner-Phone', live: true }; // false falls back to the zip on our own volume
 
 export const GAMES = [
   { id: 'blocky', label: 'blocky night', blurb: 'a pixel phone in a blocky hand, inventory slots, Achievement get!', tag: 'block survival games' },
@@ -419,7 +419,9 @@ for (const fig of $$('.st-vid')) {
 const ghUrl = `https://github.com/${GITHUB.repo}`;
 if (GITHUB.live) {
   for (const a of $$('[data-gh], .st-nav-gh')) a.href = ghUrl + '/releases/latest';
-  $('[data-gh-name]').textContent = GITHUB.repo;
+  const [owner, name] = GITHUB.repo.split('/');
+  const repoName = document.createElement('span'); repoName.textContent = name; repoName.style.whiteSpace = 'nowrap';
+  $('[data-gh-name]').replaceChildren(owner + '/', document.createElement('wbr'), repoName); // phones break after the slash, not at the hyphen
 } else {
   // until the github release is up, the same card serves the windows build from our own server
   const cta = $('.st-btn-gh'); if (cta) cta.lastChild.textContent = 'get the windows app';

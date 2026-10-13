@@ -71,30 +71,42 @@ export function pumpApp(ctx) {
       row.el.animate([{ backgroundColor: 'rgba(43,224,122,.28)' }, { backgroundColor: 'rgba(43,224,122,0)' }], { duration: 1400, easing: 'ease-out' });
     }
   }
-  // copycats: a launch named like one the phone saw earlier gets a "copy" tag. The first one stays untagged: the real
-  // original can be older than anything this phone has seen.
-  const nameKey = (s) => { const k = String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ''); return [...k].length >= 3 ? k : null; };
-  const keyOf = (c) => nameKey(c.name) || (nameKey(c.symbol) && '$' + nameKey(c.symbol));
+  // copycats and ticker wars: a launch sharing a name or a ticker with one the phone saw earlier gets a "copy" tag. The
+  // first one stays untagged: the real original can be older than anything this phone has seen.
+  const norm = (s) => {
+    const raw = String(s || '').toLowerCase().trim();
+    const k = raw.replace(/[^\p{L}\p{N}]+/gu, '') || raw.replace(/\s+/g, ''); // "_____" or "???" still match themselves
+    return [...k].length >= 3 ? k : null;
+  };
+  const keysOf = (c) => [norm(c.name), norm(c.symbol) && '$' + norm(c.symbol)].filter(Boolean);
   function firstSeen() {
     const first = new Map();
-    for (const c of net.coins.values()) { const k = keyOf(c); if (k && c.created && !(first.get(k) <= c.created)) first.set(k, c.created); }
+    for (const c of net.coins.values()) if (c.created) for (const k of keysOf(c)) if (!(first.get(k) <= c.created)) first.set(k, c.created);
     return first;
   }
+  const isCopy = (c, first) => keysOf(c).some((k) => first.get(k) < c.created);
   const mcap = (m) => net.mcOf(net.coin(m)) ?? 0;
-  // New: a copycat burst is one row, "×N", where its newest copy would sit, showing the copy you hold or else the one
-  // with the most money in it (the oldest wins ties, so the row doesn't hop to every fresh $3K copy)
+  // New: a burst (launches linked by a shared name or ticker) is one row, "×N", where its newest launch would sit,
+  // showing the one you hold or else the one with the most money in it (the oldest wins ties, so the row doesn't hop
+  // to every fresh $3K copy)
   function ids() {
     const l = (net.lists[tab] || []).filter((m) => net.coin(m));
     const n = new Map();
     if (tab !== 'new') return { want: l.slice(0, MAX), n };
+    const root = new Map(l.map((m) => [m, m]));
+    const find = (m) => { while (root.get(m) !== m) m = root.get(m); return m; };
+    const byKey = new Map();
+    for (const m of l) for (const k of keysOf(net.coin(m))) {
+      if (byKey.has(k)) { const a = find(m), b = find(byKey.get(k)); if (a !== b) root.set(a, b); } else byKey.set(k, m);
+    }
     const groups = new Map();
-    for (const m of l) { const k = keyOf(net.coin(m)); if (k) { if (!groups.has(k)) groups.set(k, []); groups.get(k).push(m); } }
+    for (const m of l) { const r = find(m); if (!groups.has(r)) groups.set(r, []); groups.get(r).push(m); }
     const want = [], done = new Set();
     for (const m of l) {
-      const k = keyOf(net.coin(m)), g = k && groups.get(k);
-      if (!g || g.length < 2) { want.push(m); continue; }
-      if (done.has(k)) continue;
-      done.add(k);
+      const r = find(m), g = groups.get(r);
+      if (g.length < 2) { want.push(m); continue; }
+      if (done.has(r)) continue;
+      done.add(r);
       const lead = g.find((x) => wallet.pos(x)) || g.reduceRight((a, b) => (mcap(b) > mcap(a) ? b : a));
       want.push(lead); n.set(lead, g.length);
     }
@@ -127,9 +139,8 @@ export function pumpApp(ctx) {
       }
       r.y = y;
       patch(r);
-      const c = net.coin(m), k = keyOf(c);
       if (n.has(m)) r.sub.dataset.n = n.get(m); else delete r.sub.dataset.n;
-      r.el.classList.toggle('bp-copy', !n.has(m) && !!k && first.get(k) < c.created);
+      r.el.classList.toggle('bp-copy', !n.has(m) && isCopy(net.coin(m), first));
     });
     shown = want;
     setText(empty, net.st.lastMsg ? (tab === 'bonding' ? 'nothing close to bonding right now' : 'waiting for launches…') : net.st.mode === 'poll' ? 'reconnecting…' : 'connecting to the trenches…');

@@ -5,20 +5,25 @@ import { sfx } from '../sound.js';
 import { ic } from '../icons.js';
 
 const ROW = 58, MAX = 14;
-const SIZES = [0.1, 0.5, 1];
+const show = (v) => String(+(+v).toFixed(4)); // 0.1, 0.375, 2
 
 export function pumpApp(ctx) {
   const { net, wallet } = ctx;
   let tab = 'new';
   let size = +(load('burner.size') || 0.5);
-  if (!SIZES.includes(size)) size = 0.5;
+  if (!(size > 0 && size <= 1000)) size = 0.5;
 
   const live = el('span.bp-live');
   const seg = el('div.bp-seg');
   for (const [id, label] of [['new', 'New'], ['rising', 'Rising'], ['bonding', 'Bonding']]) {
     seg.append(el('button', { text: label, data: { tab: id }, on: { click: () => { if (tab === id) return; sfx.tap(); tab = id; paintSeg(); render(true); } } }));
   }
-  const sizeBtn = el('button.bp-size', { on: { click: () => { sfx.tap(); size = SIZES[(SIZES.indexOf(size) + 1) % SIZES.length]; save('burner.size', size); paintSize(); } } });
+  // the one-tap buy size: tap it to type any amount
+  const sizeBtn = el('button.bp-size', { on: { click: async () => {
+    sfx.tap();
+    const v = await ctx.amount({ side: 'size', value: size });
+    if (v > 0) { size = +v; save('burner.size', size); paintSize(); }
+  } } });
   const card = buildCard();
   const list = el('div.bp-list');
   const empty = el('div.bp-empty');
@@ -29,7 +34,7 @@ export function pumpApp(ctx) {
     card.el, list);
 
   function paintSeg() { for (const b of seg.children) b.classList.toggle('bp-sel', b.dataset.tab === tab); }
-  function paintSize() { sizeBtn.innerHTML = ic.bolt + '<b>' + size + '</b>'; for (const r of rows.values()) setText(r.buy.lastChild, size); }
+  function paintSize() { sizeBtn.innerHTML = ic.bolt + '<b>' + show(size) + '</b>'; for (const r of rows.values()) setText(r.buy.lastChild, show(size)); }
 
   // ---------- rows ----------
   const rows = new Map(); // mint -> row
@@ -37,7 +42,7 @@ export function pumpApp(ctx) {
   function makeRow(c) {
     const nm = el('b'), sub = el('small'), mc = el('b'), m2 = el('small');
     const bar = el('i.bp-prog', null, el('i'));
-    const buy = el('button.bp-buy', { on: { click: (e) => { e.stopPropagation(); doBuy(c.mint, buy); } } }, el('i', { html: ic.check }), el('span', { text: size }));
+    const buy = el('button.bp-buy', { on: { click: (e) => { e.stopPropagation(); doBuy(c.mint, buy); } } }, el('i', { html: ic.check }), el('span', { text: show(size) }));
     const r = el('div.bp-row', { on: { click: (e) => { sfx.tap(); ctx.open('chart', c.mint, e.currentTarget); } } },
       ctx.pfp(c, 38), el('div.bp-row-nm', null, nm, sub), el('div.bp-row-m', null, mc, m2, bar), buy);
     setText(nm, c.name || c.symbol);
@@ -161,8 +166,14 @@ export function pumpApp(ctx) {
     const sv = el('div.bp-bc-spark');
     const half = el('button.bp-btn2', { text: 'sell 50%', on: { click: (e) => { e.stopPropagation(); sellBest(0.5, e.currentTarget); } } });
     const all = el('button.bp-btn1', { text: 'sell all', on: { click: (e) => { e.stopPropagation(); sellBest(1, e.currentTarget); } } });
+    const any = el('button.bp-btn2', { text: 'any %', on: { click: async (e) => {
+      e.stopPropagation(); sfx.tap();
+      const b = wallet.bags().find((x) => x.p.mint === cur), btn = e.currentTarget;
+      const p = cur && (await ctx.amount({ side: 'sell', coin: b?.c || net.coin(cur), held: b?.value ?? null }));
+      if (p > 0) sellBest(Math.min(p, 100) / 100, btn);
+    } } });
     const node = el('div.bp-bagcard', { on: { click: () => { if (cur) { sfx.tap(); ctx.open('chart', cur); } } } },
-      el('div.bp-bc-row', null, pf, el('div.bp-bc-nm', null, nm, sub), el('div.bp-bc-r', null, big, mc)), sv, el('div.bp-bc-act', null, half, all));
+      el('div.bp-bc-row', null, pf, el('div.bp-bc-nm', null, nm, sub), el('div.bp-bc-r', null, big, mc)), sv, el('div.bp-bc-act', null, half, any, all));
     let cur = null;
     const bigT = new Ticker(big, (v) => sol(v) + ' SOL', { k: 90, d: 20 });
     function sellBest(f, btn) {

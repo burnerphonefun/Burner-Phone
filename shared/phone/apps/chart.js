@@ -36,8 +36,20 @@ export function chartApp(ctx) {
   const pos = el('div.bp-ch-pos');
   const buys = el('div.bp-ch-btns.bp-ch-buys');
   for (const a of [0.1, 0.5, 1]) buys.append(el('button', { on: { click: (e) => doBuy(a, e.currentTarget) } }, el('small', { text: 'buy' }), el('b', { text: a + ' SOL' })));
+  // any amount / any %: the keypad sheet ("all" stays the last, loudest sell button)
+  buys.append(el('button.bp-ch-any', { on: { click: async (e) => {
+    const btn = e.currentTarget; sfx.tap();
+    const a = await ctx.amount({ side: 'buy', coin: net.coin(mint) });
+    if (a > 0) doBuy(a, btn);
+  } } }, el('small', { text: 'buy' }), el('b', { text: 'any' })));
   const sells = el('div.bp-ch-btns.bp-ch-sells');
-  for (const f of [0.25, 0.5, 1]) sells.append(el('button', { on: { click: (e) => doSell(f, e.currentTarget) } }, el('small', { text: 'sell' }), el('b', { text: f === 1 ? 'all' : f * 100 + '%' })));
+  for (const f of [0.25, 0.5]) sells.append(el('button', { on: { click: (e) => doSell(f, e.currentTarget) } }, el('small', { text: 'sell' }), el('b', { text: f * 100 + '%' })));
+  sells.append(el('button.bp-ch-any', { on: { click: async (e) => {
+    const btn = e.currentTarget; sfx.tap();
+    const p = await ctx.amount({ side: 'sell', coin: net.coin(mint), held: wallet.bags().find((b) => b.p.mint === mint)?.value ?? null });
+    if (p > 0) doSell(Math.min(p, 100) / 100, btn);
+  } } }, el('small', { text: 'sell' }), el('b', { text: 'any %' })));
+  sells.append(el('button', { on: { click: (e) => doSell(1, e.currentTarget) } }, el('small', { text: 'sell' }), el('b', { text: 'all' })));
   const v = el('section.bp-chart', null,
     el('header.bp-ch-hd', null,
       el('button.bp-backbtn', { html: ic.back, on: { click: () => { sfx.tap(); ctx.back(); } } }),

@@ -206,7 +206,7 @@
 .bp-bc-big { display: block; font: 900 30px/1 var(--bp-display); letter-spacing: .2px; font-variant-numeric: tabular-nums; }
 .bp-bc-r small { font-size: 12px; color: #d9cfc8; }
 .bp-bc-spark { height: 40px; margin-top: 8px; }
-.bp-bc-act { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 9px; }
+.bp-bc-act { display: grid; grid-template-columns: 1fr .8fr 1fr; gap: 8px; margin-top: 9px; }
 .bp-list { position: relative; flex: 1; min-height: 0; overflow: hidden; contain: strict; margin: 0 -6px; }
 .bp-empty { padding: 30px 10px; text-align: center; color: var(--bp-dim); font-size: 13px; }
 .bp-row { position: absolute; left: 0; right: 0; top: 0; height: 58px; padding: 0 6px; display: flex; align-items: center; gap: 10px; border-radius: 14px; cursor: pointer;
@@ -272,7 +272,7 @@
 .bp-ch-pos { display: flex; align-items: baseline; gap: 8px; font-size: 12px; color: var(--bp-dim); padding: 0 2px; }
 .bp-ch-pos b { color: var(--bp-text); font-size: 13px; }
 .bp-ch-pos em { font-style: normal; margin-left: auto; font: 900 18px var(--bp-display); }
-.bp-ch-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.bp-ch-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .bp-ch-btns button { padding: 6px 0 7px; border-radius: 12px; text-align: center; transition: transform .12s; }
 .bp-ch-btns small { display: block; font-size: 10px; font-weight: 600; opacity: .75; }
 .bp-ch-btns b { display: block; font-size: 14px; font-weight: 750; }
@@ -531,6 +531,33 @@
 .bp-sheet-keep { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--bp-dim); margin-bottom: 14px; }
 .bp-sheet-btns { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; }
 .bp-layer[data-skin='blocky'] .bp-sheet-card, .bp-layer[data-skin='tactical'] .bp-sheet-card { border-radius: 2px; }
+
+/* the amount sheet: any SOL to buy, any % to sell (amount.js) */
+.bp-sheet-card.bp-amt { padding: 14px 14px 12px; }
+.bp-amt-hd { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 650; color: var(--bp-dim); }
+.bp-amt-x { font-size: 13px; font-weight: 650; color: var(--bp-dim); padding: 4px 2px; }
+.bp-amt-show { display: flex; align-items: baseline; justify-content: center; gap: 6px; margin-top: 4px; }
+.bp-sheet-card .bp-amt-v { display: inline; font: 900 54px/1.05 var(--bp-display); color: var(--bp-text); font-variant-numeric: tabular-nums; letter-spacing: .5px; }
+.bp-sheet-card .bp-amt-v.bp-amt-empty { opacity: .3; }
+.bp-sheet-card .bp-amt-v.bp-amt-sel { padding: 0 6px; border-radius: 8px; background: rgba(255,90,31,.22); }
+.bp-amt-u { font-size: 18px; font-weight: 750; color: var(--bp-dim); }
+.bp-amt-note { display: block; min-height: 16px; text-align: center; font-size: 12px; color: var(--bp-dim); font-variant-numeric: tabular-nums; }
+.bp-amt-picks { display: flex; gap: 6px; margin: 12px 0 9px; }
+.bp-amt-picks button { flex: 1; padding: 7px 0; border-radius: 10px; background: var(--bp-card); font-size: 13px; font-weight: 700; transition: transform .12s, background .15s; }
+.bp-amt-picks button.bp-on { background: var(--bp-accent); color: #170700; }
+.bp-amt-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.bp-amt-pad button { padding: 10px 0; border-radius: 12px; background: var(--bp-card); font-size: 21px; font-weight: 650; font-variant-numeric: tabular-nums; transition: transform .1s; }
+.bp-amt-pad button:active, .bp-amt-picks button:active { transform: scale(.94); }
+.bp-amt-go { display: block; width: 100%; margin-top: 10px; padding: 13px 0; font-size: 15px; }
+.bp-amt-go:disabled { opacity: .5; }
+.bp-amt-go.bp-amt-buy { background: var(--bp-up); color: #05200e; }
+.bp-layer[data-skin='blocky'] .bp-amt-go.bp-amt-buy { background: #5d9b3a; color: #fff; box-shadow: inset 2px 2px 0 #8ccf5e, inset -2px -2px 0 #2f5c19; }
+.bp-layer[data-skin='tactical'] .bp-amt-go.bp-amt-buy { background: rgba(109,255,158,.2); color: var(--bp-up); box-shadow: inset 0 0 0 1px var(--bp-up); }
+.bp-ch-btns .bp-ch-any b { letter-spacing: .3px; }
+.bp-layer[data-skin='blocky'] .bp-amt-pad button, .bp-layer[data-skin='blocky'] .bp-amt-picks button { border-radius: 0; background: #8b8b8b; color: #fff; box-shadow: inset 2px 2px 0 #b5b5b5, inset -2px -2px 0 #555; }
+.bp-layer[data-skin='blocky'] .bp-amt-picks button.bp-on { background: #5d9b3a; box-shadow: inset 2px 2px 0 #8ccf5e, inset -2px -2px 0 #2f5c19; }
+.bp-layer[data-skin='tactical'] .bp-amt-pad button, .bp-layer[data-skin='tactical'] .bp-amt-picks button { border-radius: 2px; background: transparent; color: var(--bp-up); box-shadow: inset 0 0 0 1px rgba(109,255,158,.45); }
+.bp-layer[data-skin='tactical'] .bp-amt-picks button.bp-on { background: rgba(109,255,158,.18); }
 
 /* ---------- wallet app: paper / real ---------- */
 .bp-mode { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: var(--bp-card2); color: var(--bp-dim); }

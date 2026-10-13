@@ -12,6 +12,7 @@ import { bagsApp } from './apps/bags.js';
 import { walletApp } from './apps/wallet.js';
 import { cameraApp } from './apps/camera.js';
 import { spark } from './apps/spark.js';
+import { askAmount } from './amount.js';
 
 const W = 360, H = 780, BEZEL = 13; // screen size (9:19.5) and bezel
 const PW = W + BEZEL * 2, PH = H + BEZEL * 2;
@@ -66,6 +67,8 @@ export function createPhone(host, opts) {
     phone: null,
     celebrate: (r) => onSold(r),
     trade: (side, c, amt, btn) => trade(side, c, amt, btn),
+    // any amount: a keypad sheet on the phone, resolves with SOL (buy/size) or % (sell), or null
+    amount: (o) => askAmount(screen, { balance: wallet.state?.sol ?? null, solUsd: net.st?.sol || null, ...o }),
     shot: (o) => banners.flash(o),
   };
   const apps = { pump: pumpApp(ctx), chart: chartApp(ctx), bags: bagsApp(ctx), wallet: walletApp(ctx), camera: cameraApp(ctx) };

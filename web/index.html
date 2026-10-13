@@ -19,16 +19,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Geist:wght@400;500;600;700;800&family=Pixelify+Sans:wght@400;600;700&family=Lilita+One&family=Share+Tech+Mono&family=Fredoka:wght@500;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body data-world="blocky">
-  <div class="st-boot" aria-hidden="true">
-    <div class="st-boot-phone"><div class="st-boot-body"><div class="st-boot-screen">
-      <div class="st-boot-status"><b class="st-boot-time"></b><span class="st-boot-sig"><i></i><i></i><i></i><i></i></span></div>
-      <span class="st-boot-mark"><svg class="st-boot-flame" viewBox="23 16 18 25"><path d="M32 17c1.6 5.4 7.6 7.8 7.6 15a7.6 7.6 0 0 1-15.2 0c0-3.7 1.8-5.6 3.5-7 .3 2.4 1.5 4 3 4.6 0-4.6.3-8.4 1.1-12.6z"/></svg></span>
-      <b class="st-boot-word">BURNER<span>PHONE</span></b>
-      <small class="st-boot-msg">powering on</small>
-      <i class="st-boot-home"></i>
-    </div></div></div>
-  </div>
-
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-gh" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></symbol>
+    <symbol id="i-win" viewBox="0 0 16 16"><path fill="currentColor" d="M0 2.27 6.54 1.38v6.3H0zM7.32 1.27 16 0v7.68H7.32zM0 8.32h6.54v6.3L0 13.73zM7.32 8.32H16V16l-8.68-1.27z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 2.5 4 5.6v6.1c0 4.7 3.4 8.6 8 9.8 4.6-1.2 8-5.1 8-9.8V5.6z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m8.5 12 2.4 2.4 4.6-4.8"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m8 7-5 5 5 5M16 7l5 5-5 5M13.5 4.5l-3 15"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m10.5 12.5 9-9M16 7l3 3M18.5 4.5l2 2"/></symbol>
+  </svg>
   <section class="st-hero" id="top">
     <canvas class="st-world" aria-hidden="true"></canvas>
     <div class="st-shade" aria-hidden="true"></div>
@@ -75,7 +73,10 @@
     <header class="st-top">
       <a class="st-logo" href="#top">BURNER<span>PHONE</span></a>
       <span class="st-mob-pitch">a phone for your bags in any game. this one is live, paper SOL ↓</span>
-      <nav><a href="#games">games</a><a href="#real">real trading</a><a href="#get" class="st-nav-gh">github</a></nav>
+      <nav>
+        <a href="#games">games</a><a href="#real">real trading</a>
+        <a class="st-nav-icon" href="https://github.com/burnerphonefun/Burner-Phone" target="_blank" rel="noopener" aria-label="BurnerPhone source code on GitHub" title="source code on GitHub"><svg aria-hidden="true"><use href="#i-gh"/></svg></a>
+      </nav>
     </header>
 
     <div class="st-pitch">
@@ -83,8 +84,10 @@
       <h1><span>a burner phone</span> <span>for your bags.</span></h1>
       <p>press a key in any game and a phone comes up in your hand with live pump.fun on it. buy, sell, put it away.</p>
       <div class="st-cta">
-        <a class="st-btn st-btn-main st-btn-gh" href="#get"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>get it on github</a>
+        <a class="st-btn st-btn-main st-btn-dl" href="https://github.com/burnerphonefun/Burner-Phone/releases/latest" data-dl><svg aria-hidden="true"><use href="#i-win"/></svg>download for windows</a>
+        <a class="st-btn st-btn-icon" href="https://github.com/burnerphonefun/Burner-Phone" target="_blank" rel="noopener" aria-label="source code on GitHub" title="source code on GitHub"><svg aria-hidden="true"><use href="#i-gh"/></svg></a>
       </div>
+      <small class="st-cta-sub" data-dl-sub>free · windows 10 / 11 · open source</small>
     </div>
 
     <div class="st-picker" role="tablist" aria-label="pick your game"></div>
@@ -145,22 +148,36 @@
 
     <section class="st-get st-rv" id="get">
       <h2>get burnerphone</h2>
-      <a class="st-repo" href="#" data-gh target="_blank" rel="noopener">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        <span><b data-gh-name>burner</b><small data-gh-sub>open source on github · windows 10 / 11</small></span>
-        <em>open releases →</em>
-      </a>
+      <div class="st-dl">
+        <a class="st-dl-main" href="https://github.com/burnerphonefun/Burner-Phone/releases/latest" data-dl>
+          <svg aria-hidden="true"><use href="#i-win"/></svg>
+          <span><b>download for windows</b><small data-dl-sub>free · windows 10 / 11 · open source</small></span>
+        </a>
+        <div class="st-dl-alt">
+          <a href="https://github.com/burnerphonefun/Burner-Phone/releases/latest" data-zip>portable zip</a>
+          <a href="https://github.com/burnerphonefun/Burner-Phone/releases/latest" target="_blank" rel="noopener">all files + checksums</a>
+          <a href="https://github.com/burnerphonefun/Burner-Phone" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-gh"/></svg>source code</a>
+        </div>
+      </div>
       <ol class="st-steps">
-        <li><b>grab the latest release</b> on github (the zip under assets)</li>
-        <li><b>unzip, run BurnerPhone.exe</b>. it sits in the tray</li>
+        <li><b>run BurnerPhone-Setup.exe</b>. it installs just for you, no admin, and sits in the tray</li>
+        <li><b>windows asks once</b> ("unknown publisher"): more info → run anyway</li>
         <li><b>alt+q in any game</b>. paper by default, import a wallet when you want it real</li>
       </ol>
       <p class="st-get-mobile">it's a windows app. open this page on your pc to get it, or keep paper trading on the phone above.</p>
+      <div class="st-trust">
+        <div><svg aria-hidden="true"><use href="#i-code"/></svg><b>open source</b><small>every line is on github. read it, or build it yourself.</small></div>
+        <div><svg aria-hidden="true"><use href="#i-shield"/></svg><b>built by github, not us</b><small>each release is built by github actions from the public code, with a build certificate anyone can check.</small></div>
+        <div><svg aria-hidden="true"><use href="#i-eye"/></svg><b>never touches your game</b><small>a see-through window on top, like a stream overlay. no injection, no memory reading.</small></div>
+        <div><svg aria-hidden="true"><use href="#i-key"/></svg><b>your key stays on your pc</b><small>paper trading needs no wallet. a real one is encrypted by windows and never sent anywhere.</small></div>
+      </div>
       <ul class="st-faq">
         <li><b>will it get me banned?</b> it doesn't touch any game: no injection, no mods, no reading memory. a transparent window on top, the same way stream overlays work.</li>
         <li><b>fullscreen games?</b> exclusive fullscreen hides every overlay. switch the game to borderless windowed.</li>
+        <li><b>why does windows warn?</b> the app isn't code-signed yet (that's a paid certificate), so windows doesn't know the publisher and asks once. it's the same file github built from the public code: you can check that.</li>
+        <li><b>how do i check the file?</b> with the github cli: <code>gh attestation verify BurnerPhone-Setup.exe --repo burnerphonefun/Burner-Phone</code> proves github built it from this repo. or compare its sha256 with the checksums on the release.</li>
         <li><b>is my wallet safe?</b> the key is encrypted on your pc and only ever used there. still: use a burner wallet with small amounts.</li>
-        <li><b>windows warning?</b> the app isn't code-signed yet, so smartscreen asks once. more info → run anyway, or build it yourself from the source.</li>
+        <li><b>how do i remove it?</b> windows settings → apps → BurnerPhone → uninstall. your encrypted wallet stays in appdata unless you hit wallet → forget first.</li>
       </ul>
     </section>
   </main>

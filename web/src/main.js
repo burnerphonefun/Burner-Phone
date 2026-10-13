@@ -28,8 +28,6 @@ const hero = $('.st-hero');
 const canvas = $('.st-world');
 const mobile = matchMedia('(max-width: 760px)').matches;
 const params = new URLSearchParams(location.search);
-const first = (() => { try { return !sessionStorage.getItem('burner.booted'); } catch { return false; } })();
-if (!first || params.has('still')) document.documentElement.classList.add('st-skip-boot');
 document.documentElement.classList.toggle('st-is-mobile', mobile);
 document.body.dataset.world = IDS.includes(params.get('world')) ? params.get('world') : 'blocky';
 const worldName = () => document.body.dataset.world;
@@ -38,23 +36,6 @@ initSound();
 const net = createNet();
 const wallet = createWallet(net);
 let world = null;
-
-// ---------- boot screen ----------
-const boot = { bars: $$('.st-boot-sig i'), msg: $('.st-boot-msg'), t0: performance.now(), done: false };
-const bootTime = $('.st-boot-time'); if (bootTime) { const d = new Date(); bootTime.textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); } // same clock as the phone
-// signal bars are the progress: 1-4 lit
-const bootStep = (n, msg) => { boot.bars.forEach((b, i) => b.classList.toggle('on', i < n)); if (msg && boot.msg) boot.msg.textContent = msg; };
-async function bootDone() {
-  if (boot.done) return;
-  boot.done = true;
-  bootStep(4, 'connected');
-  const left = 900 - (performance.now() - boot.t0);
-  if (left > 0 && first) await wait(left);
-  $('.st-boot')?.classList.add('st-done');
-  try { sessionStorage.setItem('burner.booted', '1'); } catch {}
-  startIntro();
-}
-setTimeout(bootDone, 4000); // never hold the page hostage to a slow GPU
 
 // ---------- the phone ----------
 const phoneHost = mobile ? Object.assign(document.createElement('div'), { className: 'st-phone-mobile' }) : hero;
@@ -88,7 +69,7 @@ function startIntro() {
     if (!wallet.state.stats.buys) phone.notify({ title: '10 paper SOL on this burner', body: 'tap 0.5 on any launch to ape it', icon: 'bolt', tone: 'gold', quiet: true, ms: 4200 });
   }, mobile ? 6800 : 5000);
 }
-if (!first || params.has('still') || mobile) bootDone();
+startIntro(); // no loading screen: the poster is the first paint, the 3D world fades in over it when ready
 
 // ---------- keys ----------
 addEventListener('keydown', (e) => {
@@ -147,17 +128,12 @@ paintPicker();
 // ---------- worlds (three.js, desktop only) ----------
 async function loadWorld() {
   try {
-    bootStep(1, 'finding signal');
     const { createWorld } = await import('./scene/world.js');
-    bootStep(2, 'loading the world');
-    await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0))); // let the boot screen paint before the world blocks the thread
     world = createWorld(canvas, { world: worldName(), pixelRatio: Math.min(devicePixelRatio || 1, 1.5) });
     await world.ready;
-    bootStep(3, 'connecting');
     world.start();
     hero.classList.add('st-world-ready');
     adaptQuality();
-    bootDone();
     // build the other worlds one at a time while the page is idle, so a switch never stalls
     const rest = IDS.filter((id) => id !== worldName());
     const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1200));
@@ -166,7 +142,6 @@ async function loadWorld() {
   } catch (e) {
     console.error('world failed', e);
     hero.classList.add('st-world-failed');
-    bootDone();
   }
 }
 // adaptive quality: a weak or software GPU gets a lower resolution, then a still frame of the world, so the phone
@@ -437,30 +412,26 @@ for (const fig of $$('.st-vid')) {
   b.addEventListener('click', toggle); v.addEventListener('click', toggle);
 }
 
-// ---------- github: the app lives in an open-source repo, the site links its latest release ----------
-const ghUrl = `https://github.com/${GITHUB.repo}`;
-if (GITHUB.live) {
-  for (const a of $$('[data-gh], .st-nav-gh')) a.href = ghUrl + '/releases/latest';
-  const [owner, name] = GITHUB.repo.split('/');
-  const repoName = document.createElement('span'); repoName.textContent = name; repoName.style.whiteSpace = 'nowrap';
-  $('[data-gh-name]').replaceChildren(owner + '/', document.createElement('wbr'), repoName); // phones break after the slash, not at the hyphen
-} else {
-  // until the github release is up, the same card serves the windows build from our own server
-  const cta = $('.st-btn-gh'); if (cta) cta.lastChild.textContent = 'get the windows app';
-  const nav = $('.st-nav-gh'); if (nav) nav.textContent = 'download';
-  $('[data-gh-name]').textContent = 'BurnerPhone for Windows';
-  $('[data-gh-sub]').textContent = 'windows 10 / 11 · free · paper or your own wallet';
-  const card = $('[data-gh]'); card.removeAttribute('target'); card.querySelector('em').textContent = 'download →';
-  fetch('/api/download').then((r) => r.json()).then((d) => {
-    if (!d.available) { card.href = '#get'; card.querySelector('em').textContent = ''; return; }
-    card.href = d.url;
-    $('[data-gh-sub]').textContent = 'windows 10 / 11 · ' + Math.round(d.size / 1048576) + ' MB · free · paper or your own wallet';
-  }).catch(() => {});
-}
+// ---------- download: straight from the latest github release (built there from the public code) ----------
+// The links start on the release page and become direct file links once the release's assets are known: the
+// installer when the release has one, else the portable zip. No answer from github: the release page still works.
+const setSub = (t) => { for (const s of $$('[data-dl-sub]')) s.textContent = t; };
 if (GITHUB.live) fetch(`https://api.github.com/repos/${GITHUB.repo}/releases/latest`).then((r) => (r.ok ? r.json() : null)).then((rel) => {
   if (!rel) return;
-  const zip = (rel.assets || []).find((a) => a.name.endsWith('.zip'));
-  $('[data-gh-sub]').textContent = [rel.tag_name, zip ? Math.round(zip.size / 1048576) + ' MB' : null, 'windows 10 / 11', 'open source'].filter(Boolean).join(' · ');
+  const assets = rel.assets || [];
+  const setup = assets.find((a) => /setup.*\.exe$/i.test(a.name)), zip = assets.find((a) => /\.zip$/i.test(a.name));
+  const main = setup || zip;
+  if (main) for (const a of $$('[data-dl]')) a.href = main.browser_download_url;
+  if (zip) for (const a of $$('[data-zip]')) a.href = zip.browser_download_url;
+  setSub([rel.tag_name, main ? Math.round(main.size / 1048576) + ' MB' : null, 'windows 10 / 11', 'free', 'open source'].filter(Boolean).join(' · '));
 }).catch(() => {});
+else {
+  // no github release yet: the windows build from our own server
+  fetch('/api/download').then((r) => r.json()).then((d) => {
+    if (!d.available) return;
+    for (const a of $$('[data-dl], [data-zip]')) a.href = d.url;
+    setSub('windows 10 / 11 · ' + Math.round(d.size / 1048576) + ' MB · free');
+  }).catch(() => {});
+}
 
 if (params.has('debug')) Object.assign(window, { net, wallet, phone, getWorld: () => world, setWorld });

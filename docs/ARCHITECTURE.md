@@ -45,6 +45,7 @@ flowchart TB
 - **Push, not poll:** on connect a phone gets a `hello` with everything it needs, then one `tick` a second with only the coins whose numbers moved, plus `new`, `rug`, `grad` and `trades` events. The contract is [`shared/PROTOCOL.md`](../shared/PROTOCOL.md).
 - **Degrades instead of dying:** if pump.fun's API refuses a datacenter IP the market falls back to Jupiter prices; if the socket drops, phones poll `/api/snapshot`; if everything is down, phones keep the last state they had. Unknown numbers stay `null` and show as `–`, never as 0.
 - **Rug calls:** a 70% fall from the 5-minute high after a real pump, a dev selling 80%+ of their bag into a 40% drop, or a bonded coin's liquidity under 20% of its peak.
+- **Today's biggest rug** (`wasted.mjs`, the site's WASTED card): a peak above the curve's range only counts once pump.fun's candles show at least 10% of it actually traded (a coin that bonds on a near-empty pool can print "$17M" on $350K of trades), and rugs rank by real money at stake: the cap wiped, capped at what traded.
 - **Names are cleaned** before they reach any phone: invisible filler characters stripped, launches with slurs in the name or ticker dropped.
 
 ## The phone

@@ -322,8 +322,9 @@ async function showWasted() {
     try { if (sessionStorage.getItem('burner.wst') === r.mint) return; sessionStorage.setItem('burner.wst', r.mint); } catch {}
     wstMint = r.mint;
     const fall = usd(r.peakMc) + ' → ' + usd(r.rugMc) + (r.born && r.at > r.born ? ' · ' + age(r.at - r.born) + ' after launch' : '');
-    // on a phone the visitor's screen is the burner: the rug rings in as its own notification, tap it for the chart
-    if (mobile) {
+    // the card needs the bottom of the hero to itself; on phones (the visitor's screen is the burner) and on short laptop
+    // screens (the pitch and game picker reach down there) the rug rings in on the phone instead, tap it for the chart
+    if (mobile || wastedCardCrowded()) {
       phone.notify({ title: "today's biggest WASTED", body: tick(r.sym) + '  ' + fall, side: '-' + Math.round((1 - r.rugMc / r.peakMc) * 100) + '%', tone: 'dn',
         coin: { mint: r.mint, symbol: r.sym }, quiet: true, ms: 6500, tap: () => openWasted() });
       return;
@@ -335,6 +336,18 @@ async function showWasted() {
     wst.classList.add('st-on');
     wstT = setTimeout(hideWasted, 8000);
   } catch {}
+}
+function wastedCardCrowded() {
+  // where the card will land (its layout box, ignoring the slide-in transform) against the pitch, picker and key hints
+  const h = hero.getBoundingClientRect();
+  const card = { l: h.left + wst.offsetLeft, t: h.top + wst.offsetTop, r: h.left + wst.offsetLeft + wst.offsetWidth, b: h.top + wst.offsetTop + wst.offsetHeight };
+  return ['.st-pitch h1', '.st-pitch p', '.st-cta', '.st-picker', '.st-keys'].some((s) => {
+    const e = $(s);
+    if (!e) return false;
+    const rg = document.createRange(); rg.selectNodeContents(e); // what's drawn, not the full-width row box
+    const r = rg.getBoundingClientRect();
+    return r && r.width && card.l < r.right + 12 && r.left - 12 < card.r && card.t < r.bottom + 12 && r.top - 12 < card.b;
+  });
 }
 wst.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') clearTimeout(wstT); });
 wst.addEventListener('pointerleave', () => { if (wst.classList.contains('st-on')) wstT = setTimeout(hideWasted, 2500); });

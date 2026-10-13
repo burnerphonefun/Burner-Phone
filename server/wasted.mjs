@@ -67,12 +67,16 @@ verifySoon(); // whatever the volume already holds from before this check existe
 // a peak worth headlining: inside the curve's range, or verified by real trading. Unverified big peaks wait.
 const real = (x) => x.peakMc < VERIFY_ABOVE || (x.traded != null && x.traded >= MIN_TRADED * x.peakMc);
 
-// the UTC day's rugs, the biggest fall in dollars first. A $3K coin going to $1K is noise; it needs a real top.
+// real money at stake: the cap wiped, but never more than what actually traded (on a thin pool ~$50K of buys can
+// print a $1M cap, so the cap alone overstates it)
+const stake = (x) => (x.traded != null ? Math.min(x.lost, x.traded) : x.lost);
+
+// the UTC day's rugs, the most real money wiped first. A $3K coin going to $1K is noise; it needs a real top.
 export function topWasted(n = 5, minPeak = 12000) {
   const day = new Date(); day.setUTCHours(0, 0, 0, 0);
   const ok = (x) => x.peakMc >= minPeak && real(x);
   const today = log.filter((x) => x.at >= day.getTime() && ok(x));
   const pool = today.length ? today : log.filter((x) => Date.now() - x.at < 24 * 3600e3 && ok(x));
-  const top = pool.sort((a, b) => b.lost - a.lost).slice(0, n).map(({ tries, ...x }) => x);
+  const top = pool.sort((a, b) => stake(b) - stake(a)).slice(0, n).map(({ tries, ...x }) => x);
   return { day: day.toISOString().slice(0, 10), count: log.filter((x) => x.at >= day.getTime()).length, top };
 }

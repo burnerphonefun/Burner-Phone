@@ -9,3 +9,5 @@ downloads/
 web/src/teaser/
 web/teaser.html
 web/scene-test.html
+docs/
+.github/

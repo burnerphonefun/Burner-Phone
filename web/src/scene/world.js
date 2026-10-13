@@ -7,6 +7,8 @@ import { buildTactical } from './tactical.js';
 import { buildObby } from './obby.js';
 import { buildSurvival } from './survival.js';
 import { clamp } from './util.js';
+import postVert from './shaders/post.vert.glsl?raw';
+import postFrag from './shaders/post.frag.glsl?raw';
 
 const BUILDERS = { city: buildCity, blocky: buildBlocky, toon: buildToon, tactical: buildTactical, obby: buildObby, survival: buildSurvival };
 
@@ -33,20 +35,8 @@ export function createWorld(canvas, { world = 'city', seed = 7, manual = false, 
   const rt = new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: 4, depthBuffer: true });
   const postMat = new THREE.ShaderMaterial({
     uniforms: { tex: { value: rt.texture }, gray: { value: 0 }, aspect: { value: 1 } },
-    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
-    fragmentShader: `uniform sampler2D tex; uniform float gray; uniform float aspect; varying vec2 vUv;
-      void main(){
-        vec3 c = texture2D(tex, vUv).rgb;
-        float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
-        vec3 g = vec3(l);
-        g = (g - 0.18) * 1.18 + 0.18;                       // a bit more contrast in grey
-        c = mix(c, max(g, 0.0) * 0.86, gray);
-        vec2 q = (vUv - 0.5) * vec2(aspect, 1.0);
-        c *= 1.0 - gray * 0.55 * smoothstep(0.35, 1.05, length(q));
-        gl_FragColor = vec4(c, 1.0);
-        #include <tonemapping_fragment>
-        #include <colorspace_fragment>
-      }`,
+    vertexShader: postVert,
+    fragmentShader: postFrag,
     depthTest: false, depthWrite: false,
   });
   const postScene = new THREE.Scene();

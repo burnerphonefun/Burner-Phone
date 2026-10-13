@@ -2,6 +2,8 @@
 // Procedural 16x16 textures, face-culled mesh with baked ambient occlusion. Pure in t.
 import * as THREE from 'three';
 import { mulberry, clamp, lerp, smooth, canvasTex, disposeTree } from './util.js';
+import domeVert from './shaders/dome.vert.glsl?raw';
+import blockySkyFrag from './shaders/blocky-sky.frag.glsl?raw';
 
 const SX = 160, SY = 34, SZ = 160, OX = SX / 2, OZ = SZ / 2;
 const AIR = 0, GRASS = 1, DIRT = 2, STONE = 3, LOG = 4, LEAF = 5, ORE = 6, GRAVEL = 7, SNOW = 8, LAVA = 9, GLOW = 10, PLANK = 11, WINDOW = 12;
@@ -405,14 +407,8 @@ export function buildBlocky({ seed = 7, aspect = 16 / 9 } = {}) {
   const domeMat = new THREE.ShaderMaterial({
     side: THREE.BackSide, depthWrite: false, fog: false,
     uniforms: { top: { value: NIGHT }, hor: { value: HAZE } },
-    vertexShader: 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-    fragmentShader: `uniform vec3 top; uniform vec3 hor; varying vec3 vP;
-      void main(){
-        float h = clamp(vP.y, 0.0, 1.0);
-        gl_FragColor = vec4(mix(hor, top, smoothstep(0.0, 0.35, h)), 1.0);
-        #include <tonemapping_fragment>
-        #include <colorspace_fragment>
-      }`,
+    vertexShader: domeVert,
+    fragmentShader: blockySkyFrag,
   });
   const dome = new THREE.Mesh(new THREE.SphereGeometry(260, 24, 12), domeMat); dome.renderOrder = -2; dome.frustumCulled = false;
   own.push(domeMat, dome.geometry);

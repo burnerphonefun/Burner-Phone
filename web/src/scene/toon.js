@@ -3,6 +3,8 @@
 import * as THREE from 'three';
 import { mulberry, clamp, lerp, smooth, bake, merge, canvasTex, disposeTree } from './util.js';
 import { makeNoise, loopPath, toonRamp, glowTexture, glowSprite, skyDome } from './kit.js';
+import stormVert from './shaders/storm.vert.glsl?raw';
+import stormFrag from './shaders/storm.frag.glsl?raw';
 
 const SKY = new THREE.Color('#8fd0ff');
 
@@ -135,15 +137,8 @@ export function buildToon({ seed = 7, aspect = 16 / 9 } = {}) {
   const stormM = new THREE.ShaderMaterial({
     transparent: true, depthWrite: false, side: THREE.DoubleSide, fog: false,
     uniforms: { t: { value: 0 } },
-    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-    fragmentShader: `uniform float t; varying vec2 vUv;
-      void main(){
-        float bands = 0.55 + 0.45 * sin(vUv.x * 160.0 + t * 0.7 + sin(vUv.y * 9.0 + t * 0.5) * 1.6);
-        float streak = smoothstep(0.75, 1.0, sin(vUv.x * 420.0 - vUv.y * 30.0 + t * 1.3));
-        float fade = smoothstep(0.0, 0.05, vUv.y) * (1.0 - smoothstep(0.55, 1.0, vUv.y)) * smoothstep(0.0, 0.14, vUv.x) * (1.0 - smoothstep(0.86, 1.0, vUv.x));
-        vec3 c = mix(vec3(0.33, 0.08, 0.62), vec3(0.78, 0.45, 1.0), bands * 0.45 + streak * 0.55);
-        gl_FragColor = vec4(c, fade * (0.5 + 0.28 * bands + 0.2 * streak));
-      }`,
+    vertexShader: stormVert,
+    fragmentShader: stormFrag,
   });
   own.push(stormM);
   const storm = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 96, 1, true, 0.6, Math.PI * 1.25), stormM);

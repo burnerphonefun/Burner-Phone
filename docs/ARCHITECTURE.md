@@ -61,7 +61,7 @@ flowchart TB
 flowchart LR
   subgraph main["main process (Node)"]
     WIN["main.cjs<br/>overlay window, hotkey, tray"]
-    DET["detect.ps1<br/>window in front"]
+    DET["burner-detect.exe (Rust)<br/>window in front<br/>fallback: detect.ps1 + detect.cs"]
     W["wallet.cjs<br/>encrypted key (DPAPI)"]
     T["trader.cjs<br/>quote → guard → sign → send"]
     G["solana.cjs<br/>RPC + the guard"]
@@ -77,18 +77,20 @@ flowchart LR
 ```
 
 - **Overlay:** a frameless, transparent, always-on-top window over the display your mouse is on. It ignores the mouse until the phone is up, so clicks fall through to the game.
-- **Game detection:** `detect.ps1` is one long-lived PowerShell process that prints the foreground window's process name and title every 2 seconds. The main process maps it to a skin. Nothing else about the game is read.
+- **Game detection:** `bin/burner-detect.exe`, built from [`desktop/detect`](../desktop/detect/src/main.rs) (Rust, no dependencies, four Windows calls declared by hand), prints the foreground window's process name and title every 2 seconds and exits on its own when the app closes its pipe. The main process maps the name to a skin, ignoring its own windows (the raised phone and the wallet window take focus). If the helper is missing or dies twice without a line, `detect.ps1` takes over: one long-lived PowerShell process that compiles [`detect.cs`](../desktop/detect.cs) and prints the same lines. Nothing else about the game is read.
 - **The key** is encrypted at rest with Electron `safeStorage` (Windows DPAPI), decrypted only for the moment it signs, then wiped. The overlay page can't read it: import, reveal and confirmations happen in `secure.html`.
 - **The guard** (`solana.cjs`), before every signature, fails closed at each step: exactly one signer, a per-route program allowlist, no durable nonces, a valid blockhash, priority fee ≤ 0.002 SOL, mint checks before buys (freeze authority, permanent delegate, transfer hook, non-transferable, default-frozen, transfer fee > 10%), a minimum received from the stricter of the route's quote and an independent price, and a simulation showing the wallet loses at most what you asked for and nothing else leaves it. Full contract: [`shared/WALLET.md`](../shared/WALLET.md).
 - **Hardening:** Electron fuses (`runAsNode` off, asar-only, asar integrity), a strict CSP baked into the overlay page, permission handlers, devtools only in dev builds.
 
 ## The website
 
-`web/` is the same phone over six three.js worlds (`web/src/scene/`), one per phone skin. Each world has its own fake HUD driven by your paper wallet, and reacts to the market: a red hit when a coin in the list rugs, a gold sweep when one bonds. On phones the visitor's own screen is the burner.
+`web/` is the same phone over six three.js worlds (`web/src/scene/`), one per phone skin. Skies, the storm wall and the grey WASTED pass are GLSL shaders in [`web/src/scene/shaders/`](../web/src/scene/shaders), imported as text. Each world has its own fake HUD driven by your paper wallet, and reacts to the market: a red hit when a coin in the list rugs, a gold sweep when one bonds. On phones the visitor's own screen is the burner.
 
 ## Tests
 
 - `node scripts/wallet-test.mjs`: curve maths, paper fills, rug watch.
 - `node scripts/wallet-real-test.mjs --offline --no-electron`: the guard against crafted account states and transactions, key import/export round trips, static checks of the shipped files. Without `--offline` it also simulates real routes against mainnet (nothing is signed or sent).
+- `cargo fmt --check`, `cargo clippy -- -D warnings` and `cargo test` in `desktop/detect`: the detector's name and line handling.
+- `node scripts/detect-test.mjs` (Windows): `main.cjs`'s own detector code, lifted out and run without Electron, against the Rust helper, the PowerShell + C# fallback, and a helper that dies silently.
 
-Both run in CI on every push.
+All of them run in CI on every push (the detector on a Windows runner, which also uploads the built `burner-detect.exe`).

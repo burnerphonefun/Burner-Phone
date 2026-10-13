@@ -1,0 +1,3 @@
+# GitHub's language bar leaves docs (Markdown) and config (YAML) out by default; they're real files in this repo, so count them.
+*.md linguist-detectable
+*.yml linguist-detectable

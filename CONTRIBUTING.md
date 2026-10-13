@@ -14,7 +14,7 @@ API=http://localhost:8787 npx vite  # dev site with hot reload on :5173, proxies
 
 `?world=city` (or `blocky`, `toon`, `tactical`, `obby`, `survival`) opens a world directly; `?debug` puts `net`, `wallet`, `phone` and `getWorld()` on `window`.
 
-The Windows app: `cd desktop && npm install && npm start` (builds the overlay page, then opens Electron against your local api).
+The Windows app: `cd desktop && npm install && npm start` (builds the overlay page, then opens Electron against your local api). For the native game detector, install [Rust](https://rustup.rs) and run `node scripts/desktop-build.mjs detector`; without it the app detects games with PowerShell.
 
 ## Before you open a PR
 
@@ -24,7 +24,14 @@ node scripts/wallet-test.mjs
 node scripts/wallet-real-test.mjs --offline --no-electron
 ```
 
-CI runs the same three on every push.
+Touching the game detector (`desktop/detect`, `detect.ps1`, `detect.cs` or the detector block in `main.cjs`):
+
+```bash
+cd desktop/detect && cargo fmt --check && cargo clippy --release -- -D warnings && cargo test && cd ../..
+node scripts/desktop-build.mjs detector && node scripts/detect-test.mjs
+```
+
+CI runs all of these on every push.
 
 ## House rules
 

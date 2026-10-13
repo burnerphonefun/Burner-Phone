@@ -166,7 +166,9 @@ The server watches every coin any phone can see and calls a rug when the price f
 <summary><b>How the overlay knows which game you're in</b></summary>
 <br>
 
-A small PowerShell helper ([`desktop/detect.ps1`](desktop/detect.ps1)) reports the name and title of the window in front every two seconds. The main process maps it to a phone skin. That's all it reads: no game files, no memory, no input hooks beyond the hotkey.
+A tiny Rust helper ([`desktop/detect`](desktop/detect/src/main.rs), no dependencies, ~250 KB) asks Windows which window is in front, what it's called and which program owns it, and prints one line every two seconds. The main process maps it to a phone skin. That's all it reads: no game files, no memory, no input hooks beyond the hotkey. It exits by itself when the app closes.
+
+If the helper is missing or keeps failing, a PowerShell script with a few lines of C# ([`detect.ps1`](desktop/detect.ps1) + [`detect.cs`](desktop/detect.cs)) does the same job.
 
 </details>
 
@@ -174,7 +176,7 @@ More: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · the data contract [`shar
 
 ## Build from source
 
-Needs Node 24.
+Needs Node 24. For the Windows app, [Rust](https://rustup.rs) too (the game detector; without it the app falls back to PowerShell).
 
 ```bash
 npm install
@@ -183,7 +185,7 @@ npm start              # api + site on :8787 (PORT to change)
 
 cd desktop
 npm install
-BURNER_API=https://burner-production-5f82.up.railway.app npm run dist   # → desktop/dist/burnerphone-windows.zip
+BURNER_API=https://burner-production-5f82.up.railway.app npm run dist   # → desktop/dist/burnerphone-windows.zip (builds the detector too)
 ```
 
 Tests:
@@ -191,6 +193,8 @@ Tests:
 ```bash
 node scripts/wallet-test.mjs                                # paper fills, the curve, rug watch
 node scripts/wallet-real-test.mjs --offline --no-electron   # the real-wallet guard against crafted transactions, key handling
+cd desktop/detect && cargo test                             # the detector's parsing (Rust)
+node scripts/detect-test.mjs                                # the app's detector code against the helper and the fallback (Windows)
 ```
 
 <details>
@@ -201,8 +205,9 @@ node scripts/wallet-real-test.mjs --offline --no-electron   # the real-wallet gu
 shared/phone/     the phone (DOM + CSS 3D): apps, skins, motion, paper + real wallet adapters
 shared/curve.js   pump.fun bonding-curve maths, used by the server and the phone
 server/           one Node service: launch stream, prices, candles, rug detection, the site
-web/              the site and its three.js game worlds
-desktop/          the Electron overlay: window, hotkey, game detection, encrypted key, signer + guard
+web/              the site and its three.js game worlds (shaders in web/src/scene/shaders, GLSL)
+desktop/          the Electron overlay: window, hotkey, encrypted key, signer + guard
+desktop/detect/   the game detector (Rust), with a PowerShell + C# fallback next to it
 scripts/          tests, screenshot and teaser tools, this README's art (readme-art.mjs)
 ```
 

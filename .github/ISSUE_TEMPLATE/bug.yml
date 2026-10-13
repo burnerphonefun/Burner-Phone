@@ -35,7 +35,7 @@ body:
     id: version
     attributes:
       label: App version
-      description: From the tray menu, or the release you downloaded (e.g. v2.3)
+      description: The release you downloaded (e.g. v2.4). Also under BurnerPhone.exe → Properties → Details
   - type: input
     id: setup
     attributes:

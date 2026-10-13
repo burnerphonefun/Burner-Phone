@@ -12,24 +12,43 @@ html, body { margin: 0; background: var(--ink); color: var(--paper); font-family
 a { color: inherit; }
 button { font: inherit; color: inherit; cursor: pointer; }
 
-/* ---------- boot: a game-style loading screen, only on a cold visit ---------- */
-.st-boot { position: fixed; inset: 0; z-index: 200; display: grid; place-content: center; justify-items: center; gap: 22px;
-  background: repeating-conic-gradient(#2a2016 0 25%, #241b12 0 50%) 0 0 / 32px 32px; transition: opacity .45s ease, visibility 0s .45s; }
+/* ---------- boot: the burner powering on in a dark room, only on a cold visit. signal bars = load progress,
+   then the phone drops out of frame and the real one comes up in the hero ---------- */
+.st-boot { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; overflow: hidden; background: #0B0A09; transition: opacity .3s ease .3s, visibility 0s .6s; }
+.st-boot::before { content: ''; position: absolute; left: 50%; top: 50%; width: 900px; height: 900px; margin: -450px 0 0 -450px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255,90,31,.2), rgba(255,90,31,.06) 55%, rgba(255,90,31,0)); opacity: 0; animation: st-boot-glow 2.4s ease-in-out .35s infinite alternate; }
+@keyframes st-boot-glow { 0% { opacity: .55; } 100% { opacity: 1; } }
 .st-boot.st-done { opacity: 0; visibility: hidden; }
 .st-skip-boot .st-boot { display: none; }
-.st-boot-logo { display: flex; gap: 6px; }
-.st-boot-logo span { display: grid; place-items: center; width: 74px; height: 86px; font: 700 64px/1 'Pixelify Sans', monospace; color: #fff;
-  background: #7d7d7d; box-shadow: inset 5px 5px 0 #a8a8a8, inset -5px -5px 0 #4a4a4a, 0 6px 0 #1a1a1a; text-shadow: 4px 4px 0 #3a3a3a; animation: st-drop .5s cubic-bezier(.3,1.5,.5,1) both; }
-.st-boot-sub span { width: 50px; height: 58px; font-size: 42px; background: #d9650f; box-shadow: inset 4px 4px 0 #ff9a4a, inset -4px -4px 0 #7a3405, 0 5px 0 #1a1a1a; }
-.st-boot-sub { margin-top: -12px; }
-.st-boot-logo span:first-child { background: #d9650f; box-shadow: inset 5px 5px 0 #ff9a4a, inset -5px -5px 0 #7a3405, 0 6px 0 #1a1a1a; }
-.st-boot-logo span:nth-child(2) { animation-delay: .06s; } .st-boot-logo span:nth-child(3) { animation-delay: .12s; } .st-boot-logo span:nth-child(4) { animation-delay: .18s; } .st-boot-logo span:nth-child(5) { animation-delay: .24s; } .st-boot-logo span:nth-child(6) { animation-delay: .3s; }
-@keyframes st-drop { from { transform: translateY(-60px); opacity: 0; } to { transform: none; opacity: 1; } }
-.st-boot-splash { font: 600 22px 'Pixelify Sans', monospace; font-style: normal; color: #ffff55; text-shadow: 3px 3px 0 #3f3f00; transform: rotate(-12deg); margin: -36px 0 0 330px; animation: st-splash .6s ease-in-out infinite alternate; }
-@keyframes st-splash { to { transform: rotate(-12deg) scale(1.1); } }
-.st-boot-bar { width: 360px; height: 18px; border: 3px solid #000; background: #2a2a2a; box-shadow: 0 0 0 3px #6a6a6a; }
-.st-boot-bar i { display: block; height: 100%; background: #5d9b3a; transform-origin: left; transform: scaleX(.05); transition: transform .3s ease; }
-.st-boot-msg { font: 400 16px 'Pixelify Sans', monospace; color: #cfcfcf; }
+.st-boot-phone { position: relative; transition: transform .44s cubic-bezier(.5,-.18,.8,.4); } /* a small lift, then flicked down out of frame */
+.st-boot.st-done .st-boot-phone { transform: translate3d(0, 105vh, 0) rotate(10deg); }
+.st-boot-body { width: 226px; height: 464px; padding: 8px; border-radius: 42px; animation: st-boot-in .6s cubic-bezier(.2,.8,.2,1) backwards;
+  background: linear-gradient(115deg, #fbe7d4 0%, #b9a294 18%, #6f625c 42%, #d8c3b2 64%, #8d7a70 82%, #f0dccb 100%);
+  box-shadow: 0 40px 80px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.35); }
+@keyframes st-boot-in { from { transform: translate3d(0, 36px, 0) scale(.95); opacity: 0; } }
+.st-boot-screen { position: relative; height: 100%; border-radius: 34px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  background: radial-gradient(120% 60% at 50% 42%, #1d1512 0%, #0d0b10 70%); color: #FFF4E6; }
+/* backlight: a quick white bloom as the screen comes on */
+.st-boot-screen::after { content: ''; position: absolute; inset: 0; background: radial-gradient(80% 60% at 50% 45%, #fff, rgba(255,255,255,.5)); opacity: 0; pointer-events: none; animation: st-boot-lit .7s ease-out .3s; }
+@keyframes st-boot-lit { 0% { opacity: 0; } 14% { opacity: .5; } 100% { opacity: 0; } }
+.st-boot-status { position: absolute; top: 15px; left: 24px; right: 22px; display: flex; justify-content: space-between; align-items: center; animation: st-boot-fade .4s ease .55s backwards; }
+.st-boot-time { font: 600 12px/1 Geist, system-ui, sans-serif; letter-spacing: .3px; }
+.st-boot-sig { display: flex; align-items: flex-end; gap: 2px; height: 10px; }
+.st-boot-sig i { width: 3px; border-radius: 1px; background: rgba(255,244,230,.2); transition: background .25s; }
+.st-boot-sig i:nth-child(1) { height: 4px; } .st-boot-sig i:nth-child(2) { height: 6px; } .st-boot-sig i:nth-child(3) { height: 8px; } .st-boot-sig i:nth-child(4) { height: 10px; }
+.st-boot-sig i.on { background: #FFF4E6; }
+/* the flame lights first; its glow is its own layer so the flame only ever animates transform/opacity */
+.st-boot-mark { position: relative; width: 46px; height: 64px; animation: st-boot-ignite .5s cubic-bezier(.3,1.6,.5,1) .42s backwards; }
+.st-boot-mark::before { content: ''; position: absolute; left: -34px; right: -34px; top: -22px; bottom: -30px; background: radial-gradient(closest-side, rgba(255,140,40,.42), rgba(255,140,40,0)); }
+.st-boot-flame { position: relative; display: block; width: 100%; height: 100%; fill: #FFC23D; transform-origin: 50% 100%; animation: st-boot-flicker 1.6s ease-in-out .95s infinite; }
+@keyframes st-boot-ignite { from { transform: scale(.2); opacity: 0; } }
+@keyframes st-boot-flicker { 0%, 100% { transform: scale(1, 1) skewX(0); } 30% { transform: scale(.97, 1.05) skewX(-2deg); } 55% { transform: scale(1.02, .97) skewX(1.5deg); } 80% { transform: scale(.99, 1.03) skewX(-1deg); } }
+.st-boot-word { font: 900 33px/1 'Big Shoulders Display', Impact, sans-serif; letter-spacing: 1.5px; animation: st-boot-fade .45s ease .6s backwards; }
+.st-boot-word span { color: #FF5A1F; }
+.st-boot-msg { min-height: 14px; font: 500 12px/1.2 Geist, system-ui, sans-serif; color: rgba(255,244,230,.55); animation: st-boot-fade .45s ease .72s backwards; }
+@keyframes st-boot-fade { from { opacity: 0; transform: translate3d(0, 6px, 0); } }
+.st-boot-home { position: absolute; bottom: 9px; left: 50%; width: 76px; height: 4px; margin-left: -38px; border-radius: 2px; background: rgba(255,244,230,.35); }
+@media (prefers-reduced-motion: reduce) { .st-boot *, .st-boot::before, .st-boot *::after { animation: none !important; } .st-boot::before { opacity: .8; } .st-boot.st-done .st-boot-phone { transform: none; } }
 
 /* ---------- hero ---------- */
 .st-hero { position: relative; height: 100vh; height: 100svh; min-height: 620px; overflow: hidden; overflow: clip; background: var(--sky) center / cover no-repeat; }
@@ -283,7 +302,7 @@ body[data-world='city'] .hud-city, body[data-world='blocky'] .hud-blocky, body[d
 
 /* ---------- phones: the visitor's phone is the burner ---------- */
 @media (max-width: 760px) {
-  .st-boot-logo span { width: 46px; height: 54px; font-size: 38px; } .st-boot-splash { margin: -26px 0 0 160px; font-size: 16px; } .st-boot-bar { width: 260px; }
+  .st-boot-body { transform: scale(.86); }
   .st-hero { height: 100svh; min-height: 560px; }
   .st-top { padding: 0 16px; height: 46px; background: rgba(11,10,9,.92); }
   .st-top nav { display: none; }

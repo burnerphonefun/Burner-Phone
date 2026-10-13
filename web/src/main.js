@@ -40,12 +40,14 @@ const wallet = createWallet(net);
 let world = null;
 
 // ---------- boot screen ----------
-const boot = { bar: $('.st-boot-bar i'), msg: $('.st-boot-msg'), t0: performance.now(), done: false };
-const bootStep = (k, msg) => { if (boot.bar) boot.bar.style.transform = `scaleX(${k})`; if (msg && boot.msg) boot.msg.textContent = msg; };
+const boot = { bars: $$('.st-boot-sig i'), msg: $('.st-boot-msg'), t0: performance.now(), done: false };
+const bootTime = $('.st-boot-time'); if (bootTime) { const d = new Date(); bootTime.textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); } // same clock as the phone
+// signal bars are the progress: 1-4 lit
+const bootStep = (n, msg) => { boot.bars.forEach((b, i) => b.classList.toggle('on', i < n)); if (msg && boot.msg) boot.msg.textContent = msg; };
 async function bootDone() {
   if (boot.done) return;
   boot.done = true;
-  bootStep(1, 'done');
+  bootStep(4, 'connected');
   const left = 900 - (performance.now() - boot.t0);
   if (left > 0 && first) await wait(left);
   $('.st-boot')?.classList.add('st-done');
@@ -145,12 +147,13 @@ paintPicker();
 // ---------- worlds (three.js, desktop only) ----------
 async function loadWorld() {
   try {
-    bootStep(0.2, 'loading blocks');
+    bootStep(1, 'finding signal');
     const { createWorld } = await import('./scene/world.js');
-    bootStep(0.55, 'generating world');
+    bootStep(2, 'loading the world');
+    await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0))); // let the boot screen paint before the world blocks the thread
     world = createWorld(canvas, { world: worldName(), pixelRatio: Math.min(devicePixelRatio || 1, 1.5) });
     await world.ready;
-    bootStep(0.9, 'spawning');
+    bootStep(3, 'connecting');
     world.start();
     hero.classList.add('st-world-ready');
     adaptQuality();

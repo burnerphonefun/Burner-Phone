@@ -1,0 +1,16 @@
+name: Idea
+description: A new phone skin, an app for the phone, a better rug call, anything
+labels: [idea]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What should the burner do, and when would you use it mid-game?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it's worth it
+      description: What it fixes or what moment it creates. Links, clips or sketches welcome.

@@ -1,0 +1,50 @@
+name: Bug
+description: Something on the phone, the site or the Windows app is broken or wrong
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Wallet or key problems that someone could abuse go through [SECURITY.md](../blob/main/SECURITY.md), not here.** Never paste a private key, seed phrase or wallet file into an issue.
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where
+      options:
+        - Windows app
+        - Website (desktop browser)
+        - Website (phone)
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead. A screenshot or clip helps a lot.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to make it happen again
+      placeholder: |
+        1. press alt+q
+        2. open Bags
+        3. ...
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: From the tray menu, or the release you downloaded (e.g. v2.3)
+  - type: input
+    id: setup
+    attributes:
+      label: Game, display mode, monitors
+      description: Only for the Windows app. e.g. borderless windowed, 2 monitors, 1440p
+  - type: dropdown
+    id: wallet
+    attributes:
+      label: Wallet
+      options:
+        - Paper
+        - Real (imported or new burner)

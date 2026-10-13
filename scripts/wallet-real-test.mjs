@@ -1,4 +1,4 @@
-// node scripts/wallet-real-test.mjs [--offline]
+// node scripts/wallet-real-test.mjs [--offline] [--no-electron]   (CI runs both flags: no network, no app window)
 // Real-wallet checks that need no funds. Every attack from the security review has a case here:
 //   state-level (crafted pre/post account states), instruction-level (crafted transactions through the allowlist),
 //   signers, mint extensions, live mainnet simulations against a funded public address (never signed or sent),
@@ -17,6 +17,7 @@ const W3 = require(join(DESK, 'node_modules/@solana/web3.js'));
 const { Keypair, PublicKey, Transaction, TransactionInstruction, SystemProgram, VersionedTransaction, TransactionMessage, MessageV0, ComputeBudgetProgram, StakeProgram, StakeAuthorizationLayout } = W3;
 const bs58 = require(join(DESK, 'node_modules/bs58'));
 const offline = process.argv.includes('--offline');
+const noElectron = process.argv.includes('--no-electron');
 
 let pass = 0, failN = 0;
 const ok = (name, cond, info = '') => { if (cond) pass++; else failN++; console.log((cond ? '  ok   ' : '  FAIL ') + name + (info ? '  · ' + String(info).slice(0, 170) : '')); };
@@ -332,12 +333,14 @@ if (!offline) try {
 } catch (e) { ok('live section finished (public RPC limits?)', false, e.message); }
 
 // ---------- Electron storage + bridge self-test ----------
+if (!noElectron) {
 section('electron storage + bridge (safeStorage, temp profile)');
 const electron = join(DESK, 'node_modules', '.bin', process.platform === 'win32' ? 'electron.cmd' : 'electron');
 const run = spawnSync(electron, ['.'], { cwd: DESK, env: { ...process.env, BURNER_WALLET_SELFTEST: '1' }, encoding: 'utf8', shell: process.platform === 'win32', timeout: 120000 });
 const lines = (run.stdout || '').split('\n').filter((l) => l.startsWith('[wallet-selftest] {'));
 for (const l of lines) { const j = JSON.parse(l.slice(18)); ok(j.name, j.ok, j.err || (j.bytes ? j.bytes + ' bytes on disk' : '')); }
 ok('electron self-test ran', lines.length >= 20, (run.stderr || '').slice(0, 160));
+}
 
 console.log(`\n${pass} passed, ${failN} failed`);
 process.exit(failN ? 1 : 0);

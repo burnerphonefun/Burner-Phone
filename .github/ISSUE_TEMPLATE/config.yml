@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security problem (wallet, key, guard)
+    url: https://github.com/burnerphonefun/Burner-Phone/security/advisories/new
+    about: Report it privately so it can be fixed before anyone abuses it.
+  - name: Try it in the browser
+    url: https://burner-production-5f82.up.railway.app
+    about: The paper-trading demo, no install.

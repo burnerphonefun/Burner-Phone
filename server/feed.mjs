@@ -1,5 +1,5 @@
 // PumpPortal: one socket for new pump.fun launches and migrations, shared by every phone.
-// Uses the `ws` package, not the global WebSocket (Railway's Node 20 has none).
+// Uses the `ws` package, not the global WebSocket (Node 20 has none).
 import WebSocket from 'ws';
 import { clean, isOffensive } from './filter.mjs';
 import { logEvery, num } from './util.mjs';

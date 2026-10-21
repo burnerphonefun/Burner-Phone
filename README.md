@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://burner-production-5f82.up.railway.app"><img src="docs/banner.png" alt="BurnerPhone: a burner phone for your bags" width="100%"></a>
+<a href="https://burnerphone.fun"><img src="docs/banner.png" alt="BurnerPhone: a burner phone for your bags" width="100%"></a>
 
 <p>
   <a href="https://github.com/burnerphonefun/Burner-Phone/releases/latest"><img alt="latest release" src="https://img.shields.io/github/v/release/burnerphonefun/Burner-Phone?style=flat-square&label=release&color=FF5A1F&labelColor=0B0A09"></a>
@@ -14,7 +14,7 @@
 <h3>
   <a href="https://github.com/burnerphonefun/Burner-Phone/releases/latest">Download for Windows</a>
   &nbsp;·&nbsp;
-  <a href="https://burner-production-5f82.up.railway.app">Try it in the browser</a>
+  <a href="https://burnerphone.fun">Try it in the browser</a>
   &nbsp;·&nbsp;
   <a href="#how-it-works">How it works</a>
   &nbsp;·&nbsp;
@@ -25,7 +25,7 @@
 
 <img src="docs/hero.gif" alt="the same phone coming up in six different games" width="100%">
 
-<sub>one phone, every game · <a href="https://burner-production-5f82.up.railway.app/media/teaser-games.mp4">watch the teaser with sound ↗</a></sub>
+<sub>one phone, every game · <a href="https://burnerphone.fun/media/teaser-games.mp4">watch the teaser with sound ↗</a></sub>
 
 </div>
 
@@ -193,7 +193,7 @@ npm start              # api + site on :8787 (PORT to change)
 
 cd desktop
 npm install
-BURNER_API=https://burner-production-5f82.up.railway.app npm run dist   # → desktop/dist: BurnerPhone-Setup.exe, the portable zip, SHA256SUMS.txt
+BURNER_API=https://burnerphone.fun npm run dist   # → desktop/dist: BurnerPhone-Setup.exe, the portable zip, SHA256SUMS.txt
 ```
 
 Tests:
@@ -217,6 +217,7 @@ web/              the site and its three.js game worlds (shaders in web/src/scen
 desktop/          the Electron overlay: window, hotkey, encrypted key, signer + guard
 desktop/detect/   the game detector (Rust), with a PowerShell + C# fallback next to it
 scripts/          tests, screenshot and teaser tools, this README's art (readme-art.mjs)
+Dockerfile        the server's image (site + api); fly.toml runs it on Fly.io
 ```
 
 </details>
@@ -238,7 +239,7 @@ The key is encrypted on your PC and only ever used there, by the app's main proc
 <details>
 <summary><b>Mac or Linux?</b></summary>
 <br>
-Windows only for now: the overlay relies on Windows for the click-through window, game detection and key encryption. The <a href="https://burner-production-5f82.up.railway.app">website</a> works everywhere, phones included.
+Windows only for now: the overlay relies on Windows for the click-through window, game detection and key encryption. The <a href="https://burnerphone.fun">website</a> works everywhere, phones included.
 </details>
 
 <details>

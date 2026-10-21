@@ -1,0 +1,13 @@
+node_modules
+dist
+data
+downloads
+shots
+desktop
+docs
+scripts
+.github
+.git
+.env
+*.log
+web/src/teaser/plates

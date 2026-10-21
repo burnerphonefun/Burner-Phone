@@ -15,7 +15,7 @@ const SWAP = 'https://swap-api.pump.fun/v2/coins/';
 const PUMP = process.env.PUMPFUN_API || 'https://frontend-api-v3.pump.fun'; // override only to test the 403 path
 
 // ---------- pump.fun frontend-api availability ----------
-// Datacenter IPs (Railway) get 403 access_denied from frontend-api-v3 (lists and coins-v2).
+// Datacenter IPs (seen on Railway) can get 403 access_denied from frontend-api-v3 (lists and coins-v2).
 // Then everything it gave us comes from Jupiter instead; re-probe every 10 minutes.
 // PUMPFUN_BLOCKED=1 forces the blocked path for local testing.
 const FORCE_BLOCKED = process.env.PUMPFUN_BLOCKED === '1';

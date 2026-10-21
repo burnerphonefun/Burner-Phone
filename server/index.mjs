@@ -14,6 +14,7 @@ import { topWasted } from './wasted.mjs';
 import { BROWSER_HEADERS, LRU, isMint, meters } from './util.mjs';
 
 const PORT = Number(process.env.PORT) || 8787;
+const CANONICAL = (process.env.CANONICAL_HOST || '').toLowerCase(); // www.<this> answers with a 301 to it
 const started = Date.now();
 
 process.on('uncaughtException', (e) => console.error('uncaught', e));
@@ -71,7 +72,7 @@ function safeIcon(u) {
     const url = new URL(u);
     if (url.protocol !== 'https:' || (url.port && url.port !== '443')) return null;
     const h = url.hostname.toLowerCase();
-    if (isIP(h) || h.startsWith('[') || h === 'localhost' || !h.includes('.') || h.endsWith('.local') || h.endsWith('.internal') || h.endsWith('.railway.internal')) return null;
+    if (isIP(h) || h.startsWith('[') || h === 'localhost' || !h.includes('.') || h.endsWith('.local') || h.endsWith('.internal') || h.endsWith('.flycast')) return null;
     return url.href;
   } catch { return null; }
 }
@@ -167,6 +168,10 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url || '/', 'http://x');
     const p = url.pathname;
+    if (CANONICAL && (req.headers.host || '').toLowerCase() === 'www.' + CANONICAL) {
+      res.writeHead(301, { location: 'https://' + CANONICAL + (req.url || '/') });
+      return res.end();
+    }
     if (req.method === 'OPTIONS') {
       res.writeHead(204, { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'GET, HEAD, OPTIONS', 'access-control-max-age': '86400' });
       return res.end();

@@ -241,7 +241,7 @@ if (!offline) try {
   S.setFetch(realFetch);
   ok('token balances fall back to Jupiter when the indexed RPC is down', b2.tokens.length > 10, b2.tokens.length + ' tokens');
 
-  const snap = await (await fetch('https://burner-production-5f82.up.railway.app/api/snapshot')).json();
+  const snap = await (await fetch('https://burnerphone.fun/api/snapshot')).json();
   const coins = snap.lists.rising.map((m) => snap.coins.find((c) => c.mint === m)).filter(Boolean);
   const fresh = snap.coins.find((c) => c.mint === snap.lists.new[0]);
   // L3 mint checks
@@ -261,7 +261,7 @@ if (!offline) try {
   ok('jupiter ultra order through a vetted router', !!jtx, jord ? jord.router + ' ' + jcoin.symbol : 'none found');
   if (jtx) {
     const dec = (await S.checkMint(jcoin.mint, node)).decimals ?? 6;
-    const ref = await S.refQuote({ mint: jcoin.mint, side: 'buy', lamports: 10000000, decimals: dec, api: 'https://burner-production-5f82.up.railway.app', node });
+    const ref = await S.refQuote({ mint: jcoin.mint, side: 'buy', lamports: 10000000, decimals: dec, api: 'https://burnerphone.fun', node });
     ok('an independent reference price exists', !!ref, ref ? ref.src + ' → ' + ref.tokensRaw : '');
     const minTok = BigInt(Math.floor(Math.max(Number(ref?.tokensRaw || 0n) * 0.8, Number(jord.outAmount) * 0.85)));
     let g = await S.guard(jtx, { wallet: WHALE, mint: jcoin.mint, side: 'buy', route: 'jupiter', maxOutLamports: 0.01e9 * 1.15 + S.FEE_BUFFER, minTokensRaw: minTok, amountLamports: 0.01e9, feeBps: Number(jord.feeBps) || 0, node });
@@ -287,7 +287,7 @@ if (!offline) try {
   try {
     const pp = await S.pumpPortalTx({ publicKey: WHALE, action: 'buy', mint: fresh.mint, amount: 0.01, denominatedInSol: true, slippage: 15, priorityFee: 0.0005 });
     const bh = await S.freshBlockhash(node); pp.message.recentBlockhash = bh.blockhash;
-    const ref = await S.refQuote({ mint: fresh.mint, side: 'buy', lamports: 0.01e9, decimals: 6, api: 'https://burner-production-5f82.up.railway.app', node });
+    const ref = await S.refQuote({ mint: fresh.mint, side: 'buy', lamports: 0.01e9, decimals: 6, api: 'https://burnerphone.fun', node });
     g = await S.guard(pp, { wallet: WHALE, mint: fresh.mint, side: 'buy', route: 'pumpportal', maxOutLamports: 0.01e9 * 1.15 + S.FEE_BUFFER, minTokensRaw: ref ? BigInt(Math.floor(Number(ref.tokensRaw) * 0.8)) : null, amountLamports: 0.01e9, feeBps: 50, node });
     ok('pumpportal buy (fresh blockhash, curve reference) passes', g.ok || (g.stage === 'simulate' && !/couldn't simulate|rpc|429/.test(g.err)), (ref ? 'ref ' + ref.src + '; ' : '') + (g.err || (g.outLamports / 1e9).toFixed(5) + ' SOL out'));
   } catch (e) { ok('pumpportal buy builds', false, e.message); }
@@ -326,7 +326,7 @@ if (!offline) try {
   // the whole trade() path with an empty wallet stops before quoting (sign is never called)
   const empty = Keypair.generate();
   let signedCalled = false;
-  const tr = await T.trade({ wallet: empty.publicKey.toBase58(), sign: async () => { signedCalled = true; }, side: 'buy', mint: fresh.mint, sol: 0.01, api: 'https://burner-production-5f82.up.railway.app' });
+  const tr = await T.trade({ wallet: empty.publicKey.toBase58(), sign: async () => { signedCalled = true; }, side: 'buy', mint: fresh.mint, sol: 0.01, api: 'https://burnerphone.fun' });
   ok('empty wallet: trade() stops before quoting', !tr.ok && tr.stage === 'quote' && /not enough SOL|refused/.test(tr.err) && !signedCalled, tr.err);
   const tr2 = await T.trade({ wallet: empty.publicKey.toBase58(), sign: async () => { signedCalled = true; }, side: 'sell', mint: fresh.mint, pct: 1 });
   ok('empty wallet: sell says you hold none', !tr2.ok && /hold none/.test(tr2.err) && !signedCalled, tr2.err);

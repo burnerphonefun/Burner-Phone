@@ -21,7 +21,7 @@ function baked() {
 }
 // packaged builds only take the baked https API (no env overrides, never localhost); dev runs may point anywhere
 const DEV = !app.isPackaged;
-const PROD_API = 'https://burner-production-5f82.up.railway.app';
+const PROD_API = 'https://burnerphone.fun';
 const API = (() => {
   const v = String((DEV ? process.env.BURNER_API : null) || baked().api || (DEV ? 'http://localhost:8787' : PROD_API)).replace(/\/+$/, '');
   return DEV || /^https:\/\/[^/]+$/.test(v) ? v : PROD_API;

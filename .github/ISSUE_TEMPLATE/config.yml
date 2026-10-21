@@ -4,5 +4,5 @@ contact_links:
     url: https://github.com/burnerphonefun/Burner-Phone/security/advisories/new
     about: Report it privately so it can be fixed before anyone abuses it.
   - name: Try it in the browser
-    url: https://burner-production-5f82.up.railway.app
+    url: https://burnerphone.fun
     about: The paper-trading demo, no install.

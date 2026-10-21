@@ -66,6 +66,6 @@ Unknown numbers are `null`, never 0 and never a value borrowed from another fiel
 ## Upstream limits (measured 2026-10-12)
 
 - pump.fun swap-api trades: ~8 calls/min per IP before a fixed 60 s block; >50 trades per call = 400. Candles have their own limit.
-- Jupiter lite-api: ~36 calls/min combined (price + tokens). Set JUP_API_KEY on Railway for headroom.
-- frontend-api-v3.pump.fun (coins list, coins-v2): 403 from Railway (datacenter block). The server falls back to Jupiter.
-- PumpPortal ws: works from Railway with the ws package (Node 20 has no global WebSocket; engines pins 24.x).
+- Jupiter lite-api: ~36 calls/min combined (price + tokens). Set JUP_API_KEY on the host (`fly secrets set`) for headroom.
+- frontend-api-v3.pump.fun (coins list, coins-v2): 403 from datacenter IPs at times (seen on Railway). The server falls back to Jupiter.
+- PumpPortal ws: works from Railway and Fly with the ws package (Node 20 has no global WebSocket; engines pins 24.x).

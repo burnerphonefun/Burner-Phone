@@ -4,7 +4,7 @@
 // - pump.fun swap-api candles (`/v2/coins/<mint>/candles?interval=1s|15s|30s|1m|5m&currency=SOL`): real OHLCV,
 //   volume = the SOL traded in the bucket (checked against the trades in the same second), 0-3 s behind the
 //   chain, up to 1000 rows a call, covers the curve and PumpSwap. No 429 at 100 calls/min over 120 calls.
-//   Railway's IP is shared, so the budget starts at 60/min and backs off on a 429.
+//   the host's IP is shared (Railway, Fly), so the budget starts at 60/min and backs off on a 429.
 // - swap-api trades (polled by market.mjs on its own ~8/min budget): real prints, they move the open candle.
 // - GeckoTerminal OHLCV (`/pools/<pool>/ohlcv/minute`): fallback when swap-api has nothing for a coin.
 //   Free tier 429s after ~5 quick calls; second candles are paid-only. Used rarely, >= 8 s apart.

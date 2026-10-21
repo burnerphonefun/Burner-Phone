@@ -48,7 +48,7 @@ jobs:
       - name: build (overlay page, Rust game detector, installer, zip, checksums)
         working-directory: desktop
         env:
-          BURNER_API: https://burner-production-5f82.up.railway.app
+          BURNER_API: https://burnerphone.fun
           BURNER_RELEASE: '1'
         run: npm run dist
 

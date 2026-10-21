@@ -38,12 +38,12 @@ body[data-world='obby'] .st-shade, body[data-world='toon'] .st-shade { backgroun
 /* the mark from the X profile picture, sized to the caps */
 .st-logo { display: inline-flex; align-items: center; }
 .st-logo-mark { width: 1.18em; height: 1.18em; margin: -.12em .22em -.12em -.12em; flex: none; filter: drop-shadow(0 2px 0 rgba(0,0,0,.35)); }
-.st-top nav { display: flex; gap: 26px; margin-right: 330px; padding: 8px 16px; border-radius: 12px; background: rgba(8,6,16,.45); }
-.st-top nav a { text-decoration: none; font-weight: 600; font-size: 14px; opacity: .88; transition: opacity .2s, color .2s; }
+.st-top nav { display: flex; gap: 26px; margin-right: 0; padding: 8px 18px; border-radius: 12px; background: rgba(8,6,16,.45); }
+.st-top nav a { text-decoration: none; font-weight: 600; font-size: 15px; opacity: .88; transition: opacity .2s, color .2s; }
 .st-top nav a:hover { opacity: 1; color: var(--acc); }
 .st-top nav { align-items: center; }
-.st-nav-icon { display: grid; place-items: center; width: 22px; height: 22px; margin: -2px 0; }
-.st-nav-icon svg { width: 20px; height: 20px; }
+.st-nav-icon { display: grid; place-items: center; width: 30px; height: 30px; margin: -4px 0; }
+.st-nav-icon svg { width: 26px; height: 26px; }
 .st-mob-pitch { display: none; }
 
 .st-pitch { position: absolute; left: 44px; top: 104px; width: min(600px, 46vw); z-index: 20; }

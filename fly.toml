@@ -1,6 +1,7 @@
 # Fly.io: one always-on machine (the server keeps the pump.fun stream and every phone's WebSocket open), with a disk for the day's rugs.
+# iad: PumpPortal's launch stream is on the US east coast (~85 ms from fra, the rest sits behind Cloudflare edges).
 app = 'burnerphone'
-primary_region = 'fra'
+primary_region = 'iad'
 
 [build]
 
@@ -21,6 +22,12 @@ primary_region = 'fra'
   auto_stop_machines = 'off'
   auto_start_machines = true
   min_machines_running = 1
+
+  # every phone holds a WebSocket open; Fly's default hard limit is 25
+  [http_service.concurrency]
+    type = 'connections'
+    soft_limit = 2000
+    hard_limit = 2500
 
   [[http_service.checks]]
     grace_period = '20s'

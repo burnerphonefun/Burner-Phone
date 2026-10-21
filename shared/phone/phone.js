@@ -219,20 +219,22 @@ export function createPhone(host, opts) {
     const hue = [...(c?.mint || sym)].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) | 0, 7);
     const box = el('span.bp-pfp', { style: { width: size + 'px', height: size + 'px', background: `hsl(${Math.abs(hue) % 360} 55% 42%)` } }, el('em', { text: sym.slice(0, 1).toUpperCase() }));
     if (c?.mint && c.mint.length > 30) {
-      // a seconds-old coin's picture often isn't up yet: try again twice, 20 s apart, while it's young
-      const load = (tries) => {
+      // a seconds-old coin's picture often isn't up yet (pump.fun needs a second or two): try again after 3 s,
+      // then 20 s later, while it's young
+      const waits = [3000, 20000];
+      const load = (i) => {
         const img = new Image();
         img.alt = ''; img.decoding = 'async'; img.loading = 'lazy'; img.crossOrigin = 'anonymous';
         img.onload = () => box.classList.add('bp-pfp-ok');
         img.onerror = () => {
           img.remove();
           const young = c.created && Date.now() - c.created < 5 * 60e3;
-          if (tries > 0 && young && box.isConnected) setTimeout(() => { if (box.isConnected) load(tries - 1); }, 20000);
+          if (i < waits.length && young && box.isConnected) setTimeout(() => { if (box.isConnected) load(i + 1); }, waits[i]);
         };
         img.src = net.img(c.mint);
         box.append(img);
       };
-      load(2);
+      load(0);
     }
     return box;
   }

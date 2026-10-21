@@ -55,6 +55,9 @@ async function getImage(url, timeout, hops = 3) {
     if (r.status >= 300 && r.status < 400) {
       await r.arrayBuffer().catch(() => {});
       const loc = r.headers.get('location');
+      // a picture pump.fun hasn't processed yet (the coin's first second or two) redirects to its stock pepe:
+      // that's "not up yet", never the coin's picture, or it would stick to the coin for good
+      if (loc && loc.includes('/coin-image/placeholder')) return null;
       const next = loc && hops > 0 ? safeIcon(new URL(loc, url).href) : null;
       return next ? getImage(next, timeout, hops - 1) : null;
     }
@@ -153,7 +156,7 @@ async function serveImg(req, res, mint) {
     p = fetchImg(mint).then((img) => {
       imgFlight.delete(mint);
       if (img) imgs.set(mint, img);
-      else imgMiss.set(mint, Date.now() + ((coinAge(mint) ?? Infinity) < 5 * 60e3 ? 15000 : 600000));
+      else imgMiss.set(mint, Date.now() + ((coinAge(mint) ?? Infinity) < 5 * 60e3 ? 2500 : 600000));
       return img;
     });
     imgFlight.set(mint, p);
